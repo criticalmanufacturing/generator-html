@@ -14,7 +14,7 @@ npm install generator-html --save-dev
 After the installation is finished, run
 
 ```
-yo html
+yo @criticalmanufacturing/html
 ```
 
 This will ask you for your client prefix. This prefix is the starting name of all the packages of your solution.
@@ -28,7 +28,7 @@ The available templates are:
 On the root of your package, just open a terminal and run:
 
 ```
-yo html:app {appName}
+yo @criticalmanufacturing/html:app {appName}
 ```
 
 ### Component
@@ -36,7 +36,7 @@ yo html:app {appName}
 On the root of your package, just open a terminal and run:
 
 ```
-yo html:component {ComponentName}
+yo @criticalmanufacturing/html:component {ComponentName}
 ```
 
 ### Converter
@@ -44,7 +44,7 @@ yo html:component {ComponentName}
 On the root of your package, just open a terminal and run:
 
 ```
-yo html:converter {WidgetName}
+yo @criticalmanufacturing/html:converter {WidgetName}
 ```
 
 ### Data Source
@@ -52,7 +52,7 @@ yo html:converter {WidgetName}
 On the root of your package, just open a terminal and run:
 
 ```
-yo html:dataSource {DataSourceName}
+yo @criticalmanufacturing/html:dataSource {DataSourceName}
 ```
 
 ### Directive
@@ -60,7 +60,7 @@ yo html:dataSource {DataSourceName}
 On the root of your package, just open a terminal and run:
 
 ```
-yo html:directive {directiveName}
+yo @criticalmanufacturing/html:directive {directiveName}
 ```
 
 ### Execution View
@@ -68,7 +68,7 @@ yo html:directive {directiveName}
 On the root of your package, just open a terminal and run:
 
 ```
-yo html:executionView {ExecutionViewName}
+yo @criticalmanufacturing/html:executionView {ExecutionViewName}
 ```
 
 ### Framework
@@ -76,7 +76,7 @@ yo html:executionView {ExecutionViewName}
 On the root of your package, just open a terminal and run:
 
 ```
-yo html:framework {frameworkName}
+yo @criticalmanufacturing/html:framework {frameworkName}
 ```
 
 ### Package
@@ -84,7 +84,7 @@ yo html:framework {frameworkName}
 On the root of your repository, just open a terminal and run:
 
 ```
-yo html:package {PackageName}
+yo @criticalmanufacturing/html:package {PackageName}
 ```
 
 The system will ask you if you want to add any dependencies to your package. You can use the cursor (UP/DOWN) and the SPACE bar to select/unselect multiple dependencies. After you are done just press ENTER. You can always add more dependencies in the future, by manually editing the ```__bower.json``` file of your package.
@@ -96,7 +96,7 @@ This will create a new CMF package, within ```src/packages```.
 On the root of your package, just open a terminal and run:
 
 ```
-yo html:pipe {pipeName}
+yo @criticalmanufacturing/html:pipe {pipeName}
 ```
 
 ### Widget
@@ -104,7 +104,7 @@ yo html:pipe {pipeName}
 On the root of your package, just open a terminal and run:
 
 ```
-yo html:widget {WidgetName}
+yo @criticalmanufacturing/html:widget {WidgetName}
 ```
 
 ### Wizard
@@ -112,5 +112,5 @@ yo html:widget {WidgetName}
 On the root of your package, just open a terminal and run:
 
 ```
-yo html:wizard {WizardName}
+yo @criticalmanufacturing/html:wizard {WizardName}
 ```
