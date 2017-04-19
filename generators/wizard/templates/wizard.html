@@ -1,0 +1,11 @@
+<cmf-core-controls-wizard cmf-core-business-controls-transaction-wizard [title]="i18n.TITLE" [action-name]="i18n.ACTION" #wizard>
+
+    <!--Wizard steps-->
+    <cmf-core-controls-wizard-step [title]="i18n.steps.step1.TITLE" step-id="sampleStep">
+        <ng-template cmf-core-controls-defer-instantiation>
+            <!--Place the markup for this step-->
+            Step 1
+        </ng-template>
+    </cmf-core-controls-wizard-step>
+
+</cmf-core-controls-wizard>

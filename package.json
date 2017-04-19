@@ -1,0 +1,24 @@
+{
+  "name": "generator-html",
+  "version": "1.0.0",
+  "description": "CMF HTML GUI Scaffolding",
+  "files": [
+    "generators"
+  ],
+  "keywords": [
+    "cmf",
+    "yeoman-generator",
+    "html"
+  ],
+  "dependencies": {
+    "yeoman-generator": "^1.0.1"
+  },
+  "devDependencies": {
+    "gulp-beautify": "^2.0.1"
+  },
+  "license" : "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/criticalmanufacturing/generator-html.git"
+  }
+}
