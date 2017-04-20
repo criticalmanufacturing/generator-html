@@ -1,4 +1,7 @@
 sudo: false
+language: node_js
+node_js:
+  - "node"
 deploy:
   provider: npm
   email: sobreiro.pedro@gmail.com
