@@ -21,7 +21,7 @@ module.exports = class extends HtmlGenerator {
     	}]).then((answers) => {
         if (typeof answers.packagePrefix === "string" && answers.packagePrefix !== "" && answers.packagePrefix !== "cmf") { 
       	 // Let's update the main.js from the dev.tasks, so this setting is persisted for install and build tasks
-      	 let filePath = "utils/cmf.dev.tasks/main.js",
+      	 let filePath = "node_modules/cmf.dev.tasks/main.js",
       	 fileContent = this.fs.read(this.destinationPath(filePath));
       	 this.fs.write(filePath, fileContent.replace(/ctx.packagePrefix = "cmf"/g, `ctx.packagePrefix = "${answers.packagePrefix}"`));
          // Let's update the gulpfile.js 
