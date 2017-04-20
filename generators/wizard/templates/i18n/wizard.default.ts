@@ -8,4 +8,4 @@ export default {
             TITLE: "Step 1 title"
         }
     }
-}
+};

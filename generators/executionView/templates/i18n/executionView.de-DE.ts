@@ -8,4 +8,4 @@ export default {
             TITLE: "Tab 1 title"
         }
     }
-}
+};
