@@ -1,4 +1,4 @@
-generator-html
+CMF MES HTML Yoeman Generator
 ========= 
 
 **generator-html** is a set of scaffolding templates that enable CMF customization teams, partners and clients to easily start a new component, widget or page within Critical Manufacturing MES.
@@ -8,7 +8,7 @@ generator-html
 To start using this generator, just install it to the root of your repository.
 
 ```
-npm install generator-html --save-dev
+npm install @criticalmanufacturing/generator-html --save-dev
 ```
 
 After the installation is finished, run
@@ -114,3 +114,9 @@ On the root of your package, just open a terminal and run:
 ```
 yo @criticalmanufacturing/html:wizard {WizardName}
 ```
+
+## Additional Information
+
+This package was developed during the [UX-FAB: Universal Experience for Advanced Fabs](http://www.criticalmanufacturing.com/en/r-d/ux-fab) project.
+
+![Portugal2020](http://www.criticalmanufacturing.com/uploads/richtext/images/2017030610420258bd3cfa033c0.png)
