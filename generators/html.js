@@ -58,7 +58,7 @@ module.exports = class HtmlGenerator extends Generator {
 		if (typeof this.config.get("package") === "string") {
       		copyAndParseDelegate(this.config.get("package"), `src/${packageInnerFolder}/`);
     	} else if (this.config.get("isRoot") === true) {
-				let repositoryPackages = fs.readdirSync(this.destinationPath("src/packages"));				
+				let repositoryPackages = fs.readdirSync(this.destinationPath("src/packages")).filter((pkg) => !pkg.startsWith("."));				
 	      this.prompt([{
 	        type    : 'list',
 	        name    : 'package',

@@ -46,7 +46,7 @@ module.exports = class extends HtmlGenerator {
       type    : 'checkbox',
       name    : 'dependencies',      
       message : `Select dependencies`,
-      choices: Array.from(allPackages).sort().map((pkg) => {return {name: pkg, value: pkg}}),
+      choices: Array.from(allPackages).filter((pkg) => !pkg.startsWith(".")).sort().map((pkg) => {return {name: pkg, value: pkg}}),
       pageSize: 20, // We can set up the pageSize attribute but there’s a PR opened ATM to make the height match the terminal height. Soon this won’t be necessary
       default : null
     }]).then((answers) => {
