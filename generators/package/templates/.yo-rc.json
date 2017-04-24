@@ -1,5 +1,5 @@
 {
-	"generator-html": {
+	"@criticalmanufacturing/generator-html": {
 		"package": "<%= package.name %>"
 	}
 }
