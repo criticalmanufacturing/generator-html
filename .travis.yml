@@ -5,7 +5,7 @@ node_js:
 install:
 - sudo apt-get update && sudo apt-get --assume-yes install zip
 before_deploy:
-- sudo zip "deploy/generator-html-$TRAVIS_BRANCH-v$RELEASE_VERSION+$TRAVIS_BUILD_NUMBER.zip" -r ./* -x *.git*
+- sudo zip "generator-html-$TRAVIS_BRANCH-v$RELEASE_VERSION+$TRAVIS_BUILD_NUMBER.zip" -r ./* -x *.git*
 deploy:
   - provider: releases
     api_key:
