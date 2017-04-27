@@ -5,15 +5,13 @@ node_js:
 install:
 - sudo apt-get update && sudo apt-get --assume-yes install zip
 before_deploy:
-- mkdir deploy
-- cp README.md deploy/ && cp LICENSE deploy/
-- sudo zip "deploy/generator-html-$TRAVIS_BRANCH-v$RELEASE_VERSION+$TRAVIS_BUILD_NUMBER.zip" -r ./* -x *.git* deploy
+- sudo zip "deploy/generator-html-$TRAVIS_BRANCH-v$RELEASE_VERSION+$TRAVIS_BUILD_NUMBER.zip" -r ./* -x *.git*
 deploy:
   - provider: releases
     api_key:
       secure: 0YDUvPM53p3j3aWs0OA8CBGwWZTpzQp6pXfLPU2GNsQQ52vE1p4nR4UiT9g6wOVKYJYUsmAS6fHZ8n4IABS8PzhL76J6vE1jBBbnzoCmxvZsTcbyvvMxtJFgSqbct4aHC5BH3ex+9biaVEDk0JqPpyQbvVGsgpGgi60iEWJErP9juMHDP7sDcpFZNyi62YYgZ1Fy1u0pbkOlPWu1yPVfx51OwZ2WJXrY/A9KJru8hzpRBGtNHYGEVJ1DJvfIz+UUEHxLcbLT7MPyTqf/pG41Xcid3YQKN69+/jHFOIsTTvTVVa7NUkQqfH3De6R2L32iqndZlaBElBzlOEwtjma370RGRBt5bSOqVk8R1HCLJ2Y/InaUWFmttV7kZMRqIlt/jIY8kvnTrCx5GTdoocJUDt/q3MNFy8CiZ9fasILdl/DBddwFWinHH2S3KC7bgrv5+HmMyTt3kcoQE8oaC7z8WZRkKzfHEKr9GGdMz/HQgjvAuZEUuZHRkQ61gS8q9WNm984zJ/m3H2Y1C9bdyJ0AVCzzjVdh4RI/xg15BlW2QM/uqBfNPxtZw2UBwuv0npB/JV9KYW9VUKEMLgx7G+XVR9uQeopQC+HJb5EodWwgSrGuH7vFy9auoqJJPfMZzIv4UU7Nh3RmPQZvzwA3J9z30oiiNml/Y+3r7RgE2wbo7y4=
     file_glob: true
-    file: deploy/*
+    file: generator-html-$TRAVIS_BRANCH-v$RELEASE_VERSION+$TRAVIS_BUILD_NUMBER.zip
     on:
       tags: true
       repo: criticalmanufacturing/generator-html
