@@ -1,12 +1,26 @@
-sudo: false
+sudo: required
 language: node_js
 node_js:
-  - "node"
+- node
+install:
+- sudo apt-get update && sudo apt-get --assume-yes install zip
+before_deploy:
+- mkdir deploy
+- cp README.md deploy/ && cp LICENSE deploy/
+- sudo zip "deploy/generator-html-$TRAVIS_BRANCH-v$RELEASE_VERSION+$TRAVIS_BUILD_NUMBER.zip" -r ./* -x *.git* deploy
 deploy:
-  provider: npm
-  email: sobreiro.pedro@gmail.com
-  api_key:
-    secure: 2lzechmN7ZKXKW88Hl1AG7jtWLZiWW2KoC1JagZVb1zfLYOwuIze78rn4aBnGoDqOWNvrZNPuYF6E5pqI4c2Q4f/pvDq03ijN6zd8qQxKx/De7uQqVVNzM+aUuCPIR5jNvj/S2OVff+Hdrmt0/sbOdJ6rcAr7Dr/SsGX+sKZdskpK6hsk8qlJ6u1uLbVjeSzhqMSTG3Qi1vRd5JdAOCfcgSbbo+OkKSQ3Ij3y40csIpyVbHwjsX1zbCgvDOoYBIN8Y/w8x00m+VeOgHbWKdRfWrKKghvz1zyuswRCfCr2YoI27bYLLu3Yj4fZdRLXQgoB4I50a/L+DlCe+1itcKckpUKr/durtJnV/njBxEGPFf8nKdqexJQeBJ6NvaaCNcU9VymrGxw9oLE4Zi8jEUTVPAZoFV84HQsjNkuZXxzH5f9aff43cw/pkxhVX+zHjIKqbqeZ33KMnielLmcpWEqGYmZ41g0cLD+BF7jccafNMmv3xuRlOSWXlMNTkT7BFWLF9YMgkeI/wCnlPesjkfqJXY9WieD1l7ecWzzrBIlF6rXokOsbSdkKlB9xsxWgsxBHspppFMGMAs9aElajoL4ExQKbChkQok8p3BMcq0jwJRfe9mlRtTKCAo7yfQsm57bQAwAnFi6wUhQcLhzB/r79t0ycHRQhrJ9p8EvaiCjlqM=
-  on:
-    tags: true
-    repo: criticalmanufacturing/generator-html
+  - provider: releases
+    api_key:
+      secure: 0YDUvPM53p3j3aWs0OA8CBGwWZTpzQp6pXfLPU2GNsQQ52vE1p4nR4UiT9g6wOVKYJYUsmAS6fHZ8n4IABS8PzhL76J6vE1jBBbnzoCmxvZsTcbyvvMxtJFgSqbct4aHC5BH3ex+9biaVEDk0JqPpyQbvVGsgpGgi60iEWJErP9juMHDP7sDcpFZNyi62YYgZ1Fy1u0pbkOlPWu1yPVfx51OwZ2WJXrY/A9KJru8hzpRBGtNHYGEVJ1DJvfIz+UUEHxLcbLT7MPyTqf/pG41Xcid3YQKN69+/jHFOIsTTvTVVa7NUkQqfH3De6R2L32iqndZlaBElBzlOEwtjma370RGRBt5bSOqVk8R1HCLJ2Y/InaUWFmttV7kZMRqIlt/jIY8kvnTrCx5GTdoocJUDt/q3MNFy8CiZ9fasILdl/DBddwFWinHH2S3KC7bgrv5+HmMyTt3kcoQE8oaC7z8WZRkKzfHEKr9GGdMz/HQgjvAuZEUuZHRkQ61gS8q9WNm984zJ/m3H2Y1C9bdyJ0AVCzzjVdh4RI/xg15BlW2QM/uqBfNPxtZw2UBwuv0npB/JV9KYW9VUKEMLgx7G+XVR9uQeopQC+HJb5EodWwgSrGuH7vFy9auoqJJPfMZzIv4UU7Nh3RmPQZvzwA3J9z30oiiNml/Y+3r7RgE2wbo7y4=
+    file_glob: true
+    file: deploy/*
+    on:
+      tags: true
+      repo: criticalmanufacturing/generator-html
+  - provider: npm
+    email: sobreiro.pedro@gmail.com
+    api_key:
+      secure: 2lzechmN7ZKXKW88Hl1AG7jtWLZiWW2KoC1JagZVb1zfLYOwuIze78rn4aBnGoDqOWNvrZNPuYF6E5pqI4c2Q4f/pvDq03ijN6zd8qQxKx/De7uQqVVNzM+aUuCPIR5jNvj/S2OVff+Hdrmt0/sbOdJ6rcAr7Dr/SsGX+sKZdskpK6hsk8qlJ6u1uLbVjeSzhqMSTG3Qi1vRd5JdAOCfcgSbbo+OkKSQ3Ij3y40csIpyVbHwjsX1zbCgvDOoYBIN8Y/w8x00m+VeOgHbWKdRfWrKKghvz1zyuswRCfCr2YoI27bYLLu3Yj4fZdRLXQgoB4I50a/L+DlCe+1itcKckpUKr/durtJnV/njBxEGPFf8nKdqexJQeBJ6NvaaCNcU9VymrGxw9oLE4Zi8jEUTVPAZoFV84HQsjNkuZXxzH5f9aff43cw/pkxhVX+zHjIKqbqeZ33KMnielLmcpWEqGYmZ41g0cLD+BF7jccafNMmv3xuRlOSWXlMNTkT7BFWLF9YMgkeI/wCnlPesjkfqJXY9WieD1l7ecWzzrBIlF6rXokOsbSdkKlB9xsxWgsxBHspppFMGMAs9aElajoL4ExQKbChkQok8p3BMcq0jwJRfe9mlRtTKCAo7yfQsm57bQAwAnFi6wUhQcLhzB/r79t0ycHRQhrJ9p8EvaiCjlqM=
+    on:
+      tags: true
+      repo: criticalmanufacturing/generator-html

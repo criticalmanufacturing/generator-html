@@ -1,6 +1,6 @@
 {
   "name": "@criticalmanufacturing/generator-html",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "CMF HTML GUI Scaffolding",
   "files": [
     "generators"
