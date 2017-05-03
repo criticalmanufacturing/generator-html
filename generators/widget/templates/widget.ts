@@ -21,15 +21,34 @@ let outputs: Map<string, Widget.WidgetOutput> = new Map<string, Widget.WidgetOut
 // Place your outputs here (example : outputs.set("submit", Widget.WidgetValueType.Object);)
 
 /**
- * <%= widget.class %> Widget
+ * Please provide a meaningful description of this widget.
+ * Try to answer these questions: 
+ * * What is it?
+ * * What does it do?
+ * * Where to use it?
+ * * How to use it?
  * 
- * Please provide a meaningful description of this widget and how to use it
  * 
- * ## Example
+ * ### Widget Inputs
+ * * `string` : **name** _(default)_ - The name of the widget
+ * * `string` : **description** _(default)_ - The description of the widget
+ * * `string` : **iconClass** _(default)_ - The icon CSS class to change the widget icon
+ * (Provide a detailed list of the widget inputs here. **Sintax:** "`type [string, number, Object...]` : **name** _(dynamic)_[opt] - description")
  * 
- * ```html
- * <<%= widget.selector %>></<%= widget.selector %>>
- * ```
+ * ### Widget Outputs
+ * (Provide a detailed list of the widget outputs here. **Sintax:** "`type [string, number, Object...]` : **name** _(dynamic)_[opt] - description")
+ * 
+ * ### Inputs
+ * * `string` : **name** _(default)_ - The name of the widget
+ * * `string` : **description** _(default)_ - The description of the widget
+ * * `string` : **iconClass** _(default)_ - The icon CSS class to change the widget icon
+ * (Provide a detailed list of the widget component inputs here. **Sintax:** "`type [string, number, Object...]` : **name** _(dynamic)_[opt] - description")
+ * 
+ * ### Outputs
+ * (Provide a detailed list of the widget component outputs here. **Sintax:** "`type [string, number, Object...]` : **name** _(dynamic)_[opt] - description")
+ * 
+ * > **NOTES:** (optional)
+ * > (Provide additional notes here, all lines of the notes must be preceded by '>')
  */
 @Widget.Widget({
     name: "<%= widget.class %>",
