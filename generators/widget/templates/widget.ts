@@ -41,9 +41,7 @@ let outputs: Map<string, Widget.WidgetOutput> = new Map<string, Widget.WidgetOut
  * ### Outputs
  * (Provide a detailed list of the component outputs here as the example of Widget Inputs above)
  * 
- * [OPTIONAL SECTIONS]
- * 
- * > **NOTES:**
+ * > **NOTES: (optional)**
  * > (Provide additional notes here, all lines of the notes must be preceded with '>')
  */
 @Widget.Widget({
