@@ -22,12 +22,14 @@ let outputs: Map<string, Widget.WidgetOutput> = new Map<string, Widget.WidgetOut
 
 /**
  * Please provide a meaningful description of this widget and how to use it
+ * (Leave two lines separating the rest of the items)
  * 
  * 
  * ### Widget Inputs
- * * ```string``` : **inputA** - Widget Input A description
- * * ```number``` : **inputB** - Widget Input B description
- * * ```object[]``` : **inputC** - Widget Input C description
+ * * `string` : **inputA** - Widget Input A description
+ * * `number` : **inputB** - Widget Input B description
+ * * `Object[]` : **inputC** - Widget Input C description
+ * * `boolean` : **dynamicInputD** _(dynamic)_ - Widget Dynamic Input D description
  * (Provide a detailed list of the widget inputs here as the example above)
  * 
  * ### Widget Outputs
@@ -38,6 +40,11 @@ let outputs: Map<string, Widget.WidgetOutput> = new Map<string, Widget.WidgetOut
  * 
  * ### Outputs
  * (Provide a detailed list of the component outputs here as the example of Widget Inputs above)
+ * 
+ * [OPTIONAL SECTIONS]
+ * 
+ * > **NOTES:**
+ * > (Provide additional notes here, all lines of the notes must be preceded with '>')
  */
 @Widget.Widget({
     name: "<%= widget.class %>",
