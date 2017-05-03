@@ -2,9 +2,9 @@
 IF YOU DON'T FILL OUT THE FOLLOWING INFORMATION WE MIGHT CLOSE YOUR ISSUE WITHOUT INVESTIGATING
 -->
 
-**I'm submitting a ...**  (check one with "x")
+**I'm submitting a ...**  <!--(check one with "x")-->
 ```
-[ ] bug report => search github for a similar issue or PR before submitting
+[ ] bug report // search github for a similar issue or PR before submitting
 [ ] feature request
 [ ] support request
 ```
@@ -28,11 +28,9 @@ please provide the *STEPS TO REPRODUCE* and if possible a *MINIMAL DEMO*.
 <!-- Operating system, IDE, package manager, HTTP server, ... -->
 
 * **CMF Product version:** X.X.X
-<!-- Check whether this is still an issue in the most recent Angular version -->
+<!-- Check whether this is still an issue in the most recent CMF version -->
 
 * **Browser:** [all | Chrome XX | Firefox XX | IE XX | Safari XX | Mobile Chrome XX | Android X.X Web Browser | iOS XX Safari | iOS XX UIWebView | iOS XX WKWebView ]
 <!-- All browsers where this could be reproduced -->
- 
-* **Language:** [all | TypeScript X.X]
 
 * **Node:** `node --version` =   
