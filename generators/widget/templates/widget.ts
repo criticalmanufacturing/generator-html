@@ -21,28 +21,34 @@ let outputs: Map<string, Widget.WidgetOutput> = new Map<string, Widget.WidgetOut
 // Place your outputs here (example : outputs.set("submit", Widget.WidgetValueType.Object);)
 
 /**
- * Please provide a meaningful description of this widget and how to use it
- * (Leave two lines separating the rest of the items)
+ * Please provide a meaningful description of this widget.
+ * Try to answer these questions: 
+ * * What is it?
+ * * What does it do?
+ * * Where to use it?
+ * * How to use it?
  * 
  * 
  * ### Widget Inputs
- * * `string` : **inputA** - Widget Input A description
- * * `number` : **inputB** - Widget Input B description
- * * `Object[]` : **inputC** - Widget Input C description
- * * `boolean` : **dynamicInputD** _(dynamic)_ - Widget Dynamic Input D description
- * (Provide a detailed list of the widget inputs here as the example above)
+ * * `string` : **name** _(default)_ - The name of the widget
+ * * `string` : **description** _(default)_ - The description of the widget
+ * * `string` : **iconClass** _(default)_ - The icon CSS class to change the widget icon
+ * (Provide a detailed list of the widget inputs here. **Sintax:** "`type [string, number, Object...]` : **name** _(dynamic)_[opt] - description")
  * 
  * ### Widget Outputs
- * (Provide a detailed list of the widget outputs here as the example of Widget Inputs above)
+ * (Provide a detailed list of the widget outputs here. **Sintax:** "`type [string, number, Object...]` : **name** _(dynamic)_[opt] - description")
  * 
  * ### Inputs
- * (Provide a detailed list of the component inputs here as the example of Widget Inputs above)
+ * * `string` : **name** _(default)_ - The name of the widget
+ * * `string` : **description** _(default)_ - The description of the widget
+ * * `string` : **iconClass** _(default)_ - The icon CSS class to change the widget icon
+ * (Provide a detailed list of the widget component inputs here. **Sintax:** "`type [string, number, Object...]` : **name** _(dynamic)_[opt] - description")
  * 
  * ### Outputs
- * (Provide a detailed list of the component outputs here as the example of Widget Inputs above)
+ * (Provide a detailed list of the widget component outputs here. **Sintax:** "`type [string, number, Object...]` : **name** _(dynamic)_[opt] - description")
  * 
- * > **NOTES: (optional)**
- * > (Provide additional notes here, all lines of the notes must be preceded with '>')
+ * > **NOTES:** (optional)
+ * > (Provide additional notes here, all lines of the notes must be preceded by '>')
  */
 @Widget.Widget({
     name: "<%= widget.class %>",
