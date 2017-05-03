@@ -21,15 +21,23 @@ let outputs: Map<string, Widget.WidgetOutput> = new Map<string, Widget.WidgetOut
 // Place your outputs here (example : outputs.set("submit", Widget.WidgetValueType.Object);)
 
 /**
- * <%= widget.class %> Widget
- * 
  * Please provide a meaningful description of this widget and how to use it
  * 
- * ## Example
  * 
- * ```html
- * <<%= widget.selector %>></<%= widget.selector %>>
- * ```
+ * ### Widget Inputs
+ * * ```string``` : **inputA** - Widget Input A description
+ * * ```number``` : **inputB** - Widget Input B description
+ * * ```object[]``` : **inputC** - Widget Input C description
+ * (Provide a detailed list of the widget inputs here as the example above)
+ * 
+ * ### Widget Outputs
+ * (Provide a detailed list of the widget outputs here as the example of Widget Inputs above)
+ * 
+ * ### Inputs
+ * (Provide a detailed list of the component inputs here as the example of Widget Inputs above)
+ * 
+ * ### Outputs
+ * (Provide a detailed list of the component outputs here as the example of Widget Inputs above)
  */
 @Widget.Widget({
     name: "<%= widget.class %>",
