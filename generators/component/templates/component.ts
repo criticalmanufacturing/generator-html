@@ -1,3 +1,4 @@
+//#region Imports
 /** Core */
 import * as Core from "cmf.core/src/core";
  <% if (component.isExtendingMes) { %> 
@@ -10,21 +11,62 @@ import * as Mes from "cmf.mes/src/mes";
 import i18n from "./i18n/<%= component.name %>.default"; 
 /** Angular */
 import * as ng from "@angular/core";
+//#endregion
+
+//#region Exports
+
+//#endregion
+
+//#region Constants
+
+//#endregion
 
 /**
- * Please provide a meaningful description of this component and how to use it
+ * ## Component name
  * 
- * ## Inputs
- * * input: Description for Input
+ * Please provide a meaningful description of this component
+ * Try to answer these questions: 
+ * What is it?
+ * What does it do?
+ * Where to use it?
+ * How to use it?
+ * How it behaves with different sizes?
+ * Does it retrieve data from any external source (server, local database, text file, etc...)?
  * 
- * ## Outputs
- * * output: Description for output
+ * ### Inputs
+ * (Provide a detailed list of the inputs here. Syntax for each input description: "type [string, number, Object...] : name - description") Ex: 
+ * `string` : **name** - The name of this component
+ * `number` : **value** - The value of this component
+ *
+ * ### Outputs
+ * (Provide a detailed list of the outputs here. Syntax for each output description: "type [string, number, Object...] : name - description") Ex: 
+ * `string` : **onNameChange** - When the name of the component change, this output emits the new name
+ * `number` : **onValueChange** - When the value of the component change, this output emits the new value
  * 
- * ## Example
+ * ### Dependencies
  * 
- * ```html
+ * #### Components
+ * (Provide a detailed list of components that this component depends on) Ex: 
+ * * ComponentA
+ * * ComponentB
+ * 
+ * #### Services
+ * (Provide a detailed list of services that this component depends on) Ex:
+ * * ServiceA
+ * * ServiceB
+ * 
+ * #### Directives
+ *  (Provide a detailed list of directives that this component depends on) Ex: 
+ * * DirectiveA
+ * * DirectiveB
+ * 
+ * ### Example
+ * ```HTML
  * <your-custom-selector [input]="myInputValue" (output)="myOutputValue"></your-custom-selector>
  * ```
+ *
+ * > **NOTES:** (optional)
+ * > (Provide additional notes here, all lines of the notes must be preceded by '>')
  */
 @Core.Component({
     moduleId: __moduleName,
@@ -46,6 +88,11 @@ export class <%= component.class %> extends<% if (component.isExtendingMes) { %>
 
     //#endregion
 
+    /**
+     * Constructor
+     * 
+     * @param viewContainerRef the reference to the component view container
+     */
     constructor(viewContainerRef: ng.ViewContainerRef) { 
         super(viewContainerRef);
     }
@@ -56,6 +103,11 @@ export class <%= component.class %> extends<% if (component.isExtendingMes) { %>
 
     //#region Public methods
     
+    /**
+     * On changes method
+     * 
+     * @param changes the changes made to the component properties
+     */
     public ngOnChanges(changes: ng.SimpleChanges): void {
         
     }
