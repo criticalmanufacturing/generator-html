@@ -15,7 +15,6 @@ import * as ng from "@angular/core";
  * Try to answer these questions: 
  * * What is it?
  * * What it does?
- * * How it behave with different sizes?
  * * Does it retrieve data from any external source (server, local database, text file, etc...)?
  * 
  * @howToUse

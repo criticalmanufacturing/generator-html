@@ -27,7 +27,7 @@ let outputs: Map<string, Widget.WidgetOutput> = new Map<string, Widget.WidgetOut
  * Try to answer these questions here: 
  * * What is it?
  * * What it does?
- * * How it behave with different sizes?
+ * * How does it behave with different sizes?
  * * Does it retrieve data from any external source (server, local database, text file, etc...)?
  * 
  * @howToUse
