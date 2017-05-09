@@ -9,10 +9,31 @@ import i18n from "./i18n/<%= dataSource.name %>.default";
 import * as ng from "@angular/core";
 
 /**
- * <%= dataSource.class %> DataSource
+ * @whatItDoes
  * 
- * Please provide a meaningful description of this data data source
+ * Please provide a meaningful description of this DataSource.
+ * Try to answer these questions: 
+ * * What is it?
+ * * What it does?
+ * * How it behave with different sizes?
+ * * Does it retrieve data from any external source (server, local database, text file, etc...)?
  * 
+ * @howToUse
+ * 
+ * The DataSource is used in an UIPage with the inputs and outputs mentioned below. 
+ * 
+ * Besides the description above, please complement it with a meaningful description of this component that answer these questions: 
+ * * How to use it?
+ * * Where and When to use it?
+ * 
+ * ### DataSource Settings Inputs
+ * (Provide a detailed list of the DataSource properties configurable in settings. Syntax for list items: " * type [string, number, Object...] : name  - description") 
+ * 
+ * ### DataSource Inputs
+ * (Provide a detailed list of the DataSource inputs here. Syntax for list items: " * type [string, number, Object...] : name - description") 
+ * 
+ * ### DataSource Outputs
+ * (Provide a detailed list of the DataSource outputs here. Syntax for list items: " * type [string, number, Object...] : name - description") 
  */
 @DataSource.DataSource({
     name: i18n.TITLE

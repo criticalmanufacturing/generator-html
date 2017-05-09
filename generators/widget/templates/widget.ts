@@ -21,35 +21,61 @@ let outputs: Map<string, Widget.WidgetOutput> = new Map<string, Widget.WidgetOut
 // Place your outputs here (example : outputs.set("submit", Widget.WidgetValueType.Object);)
 
 /**
+ * @whatItDoes
+ * 
  * Please provide a meaningful description of this widget.
- * Try to answer these questions: 
+ * Try to answer these questions here: 
  * * What is it?
- * * What does it do?
- * * Where to use it?
- * * How to use it?
+ * * What it does?
  * * How it behave with different sizes?
  * * Does it retrieve data from any external source (server, local database, text file, etc...)?
+ * 
+ * @howToUse
+ * 
+ * The widget is used in an UIPage with the inputs and outputs mentioned below. 
+ * 
+ * Also the configurable settings of the widget are referred in Widget Settings Component 
+ * 
+ * Besides the description above, please complement it with a meaningful description of this widget that answer these questions: 
+ * * How to use it?
+ * * Where and When to use it?
  * 
  * ### Widget Inputs
  * * `string` : **name** _(default)_ - The name of the widget
  * * `string` : **description** _(default)_ - The description of the widget
  * * `string` : **iconClass** _(default)_ - The icon CSS class to change the widget icon
- * (Provide a detailed list of the widget inputs here. Syntax: "type [string, number, Object...] : name _(dynamic)_[opt] - description")
+ * (Provide a detailed list of the widget inputs here. Syntax for list items: " * type [string, number, Object...] : name _(dynamic)_[opt] - description")
  * 
  * ### Widget Outputs
- * (Provide a detailed list of the widget outputs here. Syntax: "type [string, number, Object...] : name _(dynamic)_[opt] - description")
+ * (Provide a detailed list of the widget outputs here. Syntax for list items: " * type [string, number, Object...] : name _(dynamic)_[opt] - description")
  * 
- * ### Inputs
- * * `string` : **name** _(default)_ - The name of the widget
- * * `string` : **description** _(default)_ - The description of the widget
- * * `string` : **iconClass** _(default)_ - The icon CSS class to change the widget icon
- * (Provide a detailed list of the widget component inputs here. Syntax: "type [string, number, Object...] : name _(dynamic)_[opt] - description")
+ * ### Widget Settings
+ * See {@link WidgetSettingsComponent}
  * 
- * ### Outputs
- * (Provide a detailed list of the widget component outputs here. Syntax: "type [string, number, Object...] : name _(dynamic)_[opt] - description")
+ * ### _NOTES_ (optional)
+ * (Provide additional notes here)
  * 
- * > **NOTES:** (optional)
- * > (Provide additional notes here, all lines of the notes must be preceded by '>')
+ * @description
+ * 
+ * ## Widget Component Name
+ * 
+ * ### Dependencies
+ * 
+ * #### Components
+ * (Provide a detailed list of components that this component depends on) Ex: 
+ * * ComponentA : `package` (Ex: `cmf.core.controls`)
+ * * ComponentB : `package` (Ex: `cmf.core.controls`)
+ * 
+ * #### Services
+ * (Provide a detailed list of services that this component depends on) Ex:
+ * * ServiceA : `package` (Ex: `cmf.core.controls`)
+ * * ServiceB : `package` (Ex: `cmf.core.controls`)
+ * 
+ * #### Directives
+ *  (Provide a detailed list of directives that this component depends on) Ex: 
+ * * DirectiveA : `package` (Ex: `cmf.core.controls`)
+ * * DirectiveB : `package` (Ex: `cmf.core.controls`)
+ * 
  */
 @Widget.Widget({
     name: "<%= widget.class %>",
