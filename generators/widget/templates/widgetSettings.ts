@@ -15,7 +15,7 @@ import * as ng from "@angular/core";
 /**
  * @whatItDoes
  * 
- * Please provide a meaningful description of this Widget Settings and what it is needed for, adn describe all the properties that are configurable in the correspondent Widget
+ * Please provide a meaningful description of this Widget Settings and what it is needed for. Also describe all the properties that are configurable in the correspondent Widget
  * 
  * ### Widget Configurable Properties
  * * `string` : **name** _(default)_ - The name of the widget
