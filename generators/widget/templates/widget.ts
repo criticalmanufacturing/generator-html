@@ -27,26 +27,25 @@ let outputs: Map<string, Widget.WidgetOutput> = new Map<string, Widget.WidgetOut
  * * What does it do?
  * * Where to use it?
  * * How to use it?
- * * How it behave with different sizes?
- * * Does it retrieve data from any external source (server, local database, text file, etc...)?
+ * 
  * 
  * ### Widget Inputs
  * * `string` : **name** _(default)_ - The name of the widget
  * * `string` : **description** _(default)_ - The description of the widget
  * * `string` : **iconClass** _(default)_ - The icon CSS class to change the widget icon
- * (Provide a detailed list of the widget inputs here. Syntax: "type [string, number, Object...] : name _(dynamic)_[opt] - description")
+ * (Provide a detailed list of the widget inputs here. **Sintax:** "`type [string, number, Object...]` : **name** _(dynamic)_[opt] - description")
  * 
  * ### Widget Outputs
- * (Provide a detailed list of the widget outputs here. Syntax: "type [string, number, Object...] : name _(dynamic)_[opt] - description")
+ * (Provide a detailed list of the widget outputs here. **Sintax:** "`type [string, number, Object...]` : **name** _(dynamic)_[opt] - description")
  * 
  * ### Inputs
  * * `string` : **name** _(default)_ - The name of the widget
  * * `string` : **description** _(default)_ - The description of the widget
  * * `string` : **iconClass** _(default)_ - The icon CSS class to change the widget icon
- * (Provide a detailed list of the widget component inputs here. Syntax: "type [string, number, Object...] : name _(dynamic)_[opt] - description")
+ * (Provide a detailed list of the widget component inputs here. **Sintax:** "`type [string, number, Object...]` : **name** _(dynamic)_[opt] - description")
  * 
  * ### Outputs
- * (Provide a detailed list of the widget component outputs here. Syntax: "type [string, number, Object...] : name _(dynamic)_[opt] - description")
+ * (Provide a detailed list of the widget component outputs here. **Sintax:** "`type [string, number, Object...]` : **name** _(dynamic)_[opt] - description")
  * 
  * > **NOTES:** (optional)
  * > (Provide additional notes here, all lines of the notes must be preceded by '>')
