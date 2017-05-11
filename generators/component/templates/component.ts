@@ -22,51 +22,64 @@ import * as ng from "@angular/core";
 //#endregion
 
 /**
- * ## Component name
+ * @whatItDoes
  * 
  * Please provide a meaningful description of this component
  * Try to answer these questions: 
- * What is it?
- * What does it do?
- * Where to use it?
- * How to use it?
- * How it behaves with different sizes?
- * Does it retrieve data from any external source (server, local database, text file, etc...)?
+ * * What is it?
+ * * What it does?
+ * * How does it behave with different sizes?
+ * * Does it retrieve data from any external source (server, local database, text file, etc...)?
+ *
+ * @howToUse
+ *  
+ * This component is used with the inputs and outputs mentioned below. 
+ * 
+ * Besides the description above, please complement it with a meaningful description of this component that answer these questions: 
+ * * How to use it?
+ * * Where and When to use it?
  * 
  * ### Inputs
- * (Provide a detailed list of the inputs here. Syntax for each input description: "type [string, number, Object...] : name - description") Ex: 
+ * (Provide a detailed list of the inputs here. Syntax for each input description: " * type [string, number, Object...] : name - description") Ex: 
  * `string` : **name** - The name of this component
  * `number` : **value** - The value of this component
  *
  * ### Outputs
- * (Provide a detailed list of the outputs here. Syntax for each output description: "type [string, number, Object...] : name - description") Ex: 
+ * (Provide a detailed list of the outputs here. Syntax for each output description: " * type [string, number, Object...] : name - description") Ex: 
  * `string` : **onNameChange** - When the name of the component change, this output emits the new name
  * `number` : **onValueChange** - When the value of the component change, this output emits the new value
+ * 
+ * ### Example
+ * To use the component, assume this HTML Template as an example:
+ *
+ * ```HTML
+ * <your-custom-selector [input]="myInputValue" (output)="myOutputValue"></your-custom-selector>
+ * ```
+ * 
+ * ### _NOTES_ (optional)
+ * (Provide additional notes here)
+ * 
+ * @description
+ * 
+ * ## <%= component.class %> Component
  * 
  * ### Dependencies
  * 
  * #### Components
  * (Provide a detailed list of components that this component depends on) Ex: 
- * * ComponentA
- * * ComponentB
+ * * ComponentA : `package` (Ex: `cmf.core.controls`)
+ * * ComponentB : `package` (Ex: `cmf.core.controls`)
  * 
  * #### Services
  * (Provide a detailed list of services that this component depends on) Ex:
- * * ServiceA
- * * ServiceB
+ * * ServiceA : `package` (Ex: `cmf.core.controls`)
+ * * ServiceB : `package` (Ex: `cmf.core.controls`)
  * 
  * #### Directives
  *  (Provide a detailed list of directives that this component depends on) Ex: 
- * * DirectiveA
- * * DirectiveB
- * 
- * ### Example
- * ```HTML
- * <your-custom-selector [input]="myInputValue" (output)="myOutputValue"></your-custom-selector>
- * ```
+ * * DirectiveA : `package` (Ex: `cmf.core.controls`)
+ * * DirectiveB : `package` (Ex: `cmf.core.controls`)
  *
- * > **NOTES:** (optional)
- * > (Provide additional notes here, all lines of the notes must be preceded by '>')
  */
 @Core.Component({
     moduleId: __moduleName,

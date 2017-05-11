@@ -13,15 +13,37 @@ import i18n from "./i18n/<%= widget.name %>.default";
 import * as ng from "@angular/core";
 
 /**
- * <%= widget.class %> Widget Settings
+ * @whatItDoes
  * 
- * Please provide a meaningful description of this widget and how to use it
+ * Please provide a meaningful description of this Widget Settings and what it is needed for. Also describe all the properties that are configurable in the correspondent Widget
  * 
- * ## Example
+ * ### Widget Configurable Properties
+ * * `string` : **name** _(default)_ - The name of the widget
+ * * `string` : **description** _(default)_ - The description of the widget
+ * * `string` : **iconClass** _(default)_ - The icon CSS class to change the widget icon
+ * (Provide a detailed list of the widget configurable options here. Syntax for list items: " * type [string, number, Object...] : name - description") 
  * 
- * ```html
- * <<%= widget.selector %>WidgetSettings></<%= widget.selector %>WidgetSettings>
- * ```
+ * @description
+ * 
+ * ## <%= widget.class %> Widget Settings Component
+ * 
+ * ### Dependencies
+ * 
+ * #### Components
+ * (Provide a detailed list of components that this component depends on) Ex: 
+ * * ComponentA : `package` (Ex: `cmf.core.controls`)
+ * * ComponentB : `package` (Ex: `cmf.core.controls`)
+ * 
+ * #### Services
+ * (Provide a detailed list of services that this component depends on) Ex:
+ * * ServiceA : `package` (Ex: `cmf.core.controls`)
+ * * ServiceB : `package` (Ex: `cmf.core.controls`)
+ * 
+ * #### Directives
+ *  (Provide a detailed list of directives that this component depends on) Ex: 
+ * * DirectiveA : `package` (Ex: `cmf.core.controls`)
+ * * DirectiveB : `package` (Ex: `cmf.core.controls`)
+ * 
  */
 @Core.Component({
     moduleId: __moduleName,
