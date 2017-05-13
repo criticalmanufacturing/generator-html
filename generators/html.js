@@ -20,17 +20,17 @@ module.exports = class HtmlGenerator extends Generator {
 	}
 
 	/**
-	 * Updates the web app's __bower.json
+	 * Updates the web app's package.json
 	 */
-  updateWebAppBowerJSON(packagePath) {
+  updateWebAppPackageJSON(packagePath) {
 		let webAppFolderName = (this.options.packageName.startsWith("cmf.core") ? "cmf.core.web" : this.options.packageName.startsWith("cmf.mes") ? "cmf.mes.web" : `${this.ctx.packagePrefix}.web`),
         	webAppFolderPath = `apps/${webAppFolderName}`, 
-        	webAppBowerJSONPath = `${webAppFolderPath}/__bower.json`,        	
-        	webAppBowerJSONObject = this.fs.readJSON(this.destinationPath(webAppBowerJSONPath));            
+        	webAppPackageJSONPath = `${webAppFolderPath}/package.json`,        	
+        	webAppPackageJSONObject = this.fs.readJSON(this.destinationPath(webAppPackageJSONPath));            
     	this.webAppFolderPath = webAppFolderPath;        
-    	if (!(this.options.packageName in webAppBowerJSONObject.dependencies)) {
-    		webAppBowerJSONObject.dependencies[this.options.packageName] = packagePath;
-    		this.fs.writeJSON(webAppBowerJSONPath, webAppBowerJSONObject); 	
+    	if (!(this.options.packageName in webAppPackageJSONObject.dependencies)) {
+    		webAppPackageJSONObject.dependencies[this.options.packageName] = packagePath;
+    		this.fs.writeJSON(webAppPackageJSONPath, webAppPackageJSONObject); 	
     	}    	
     	this.webAppFolderPath = webAppFolderPath;    	
 	}

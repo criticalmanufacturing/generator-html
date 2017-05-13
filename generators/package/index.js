@@ -59,13 +59,13 @@ module.exports = class extends HtmlGenerator {
   /**
   * This method will perform several tasks such as
   * - Copy all package templates to "src/packages"
-  * - Will update the __bower.json with all the dependencies defined for the package
-  * - Will update the __bower.json of the web app so it is aware of this new package
+  * - Will update the package.json with all the dependencies defined for the package
+  * - Will update the package.json of the web app so it is aware of this new package
   * - Will update the config.json of the web app, so it loads the new package once it starts
   * - Will udpate the root's gulpfile.js so when a "gulp install" or "gulp build" is issued at root level, it will also account for the new package.
   */
   copyTemplates() {    
-    let packageConfig = { name : this.options.packageName}, templatesToParse = ['__bower.json', 'package.json', 'gulpfile.js', '.yo-rc.json',
+    let packageConfig = { name : this.options.packageName}, templatesToParse = ['package.json', 'gulpfile.js', '.yo-rc.json',
      { templateBefore: 'src/metadata.ts', templateAfter: `src/${packageConfig.name}.metadata.ts`} ], packagesFolder = 'src/packages/';    
     this.fs.copy([this.templatePath('**'), '!**/metadata.ts'], this.destinationPath(`${packagesFolder}${this.options.packageName}`));
     templatesToParse.forEach((template) => {
@@ -74,42 +74,40 @@ module.exports = class extends HtmlGenerator {
         this.fs.copyTpl(this.templatePath(templateBefore), this.destinationPath(`${packagesFolder}${this.options.packageName}/${templateAfter}`), {package: packageConfig})
       });   
 
-    // Let's update the destination _bower.json with the lbos and any dependencies that may have been defined          
-    let bowerJSONPath = `${packagesFolder}${this.options.packageName}/__bower.json`,
-    bowerJSONObject = this.fs.readJSON(this.destinationPath(bowerJSONPath));
-    bowerJSONObject.dependencies["cmf.lbos"] = (this.ctx.packagePrefix  === "cmf") ? "@@GUIRepositoryRoot/Library/HTML/cmf.mes.lbos" : "@@GUIWepAppRoot/cmf.lbos";
+    // Let's update the destination package.json with the lbos and any dependencies that may have been defined          
+    let packageJSONPath = `${packagesFolder}${this.options.packageName}/package.json`,
+    packageJSONObject = this.fs.readJSON(this.destinationPath(packageJSONPath)),
+    appLibsFolder = `file:../../../apps/${this.ctx.packagePrefix}.web/${this.ctx.libsFolder}/`;
+    packageJSONObject.dependencies["cmf.lbos"] = (this.ctx.packagePrefix  === "cmf") ? "file:../../../../Library/HTML/cmf.mes.lbos" : `${appsLibsFolder}cmf.lbos`;
     if (this.options.packageName.startsWith("cmf.mes") ) {
-      bowerJSONObject.dependencies["cmf.mes"] = "@@GUIRepositoryRoot/MESHTML/src/cmf.mes";  
+      packageJSONObject.dependencies["cmf.mes"] = "file:../../../../MESHTML/src/cmf.mes";  
     } else if (this.ctx.packagePrefix  !== "cmf") { // Here we are assuming we are customizing on top of mes and not on core. 
-      bowerJSONObject.dependencies["cmf.mes"] = "@@GUIWepAppRoot/cmf.mes";
+      packageJSONObject.dependencies["cmf.mes"] = `${appsLibsFolder}cmf.mes`;
     }
     
     if (this.dependencies instanceof Array && this.dependencies.length > 0) {          
       this.dependencies.forEach((dependency) => {
         let link = null, repository = this.destinationRoot().split("\\").pop();
         if (dependency.startsWith("cmf.core") && repository === "MESHTML") {
-          link = `@@GUIRepositoryRoot/COREHTML/${packagesFolder}${dependency}`;
-        } else if ((dependency.startsWith(this.ctx.packagePrefix))) {   
-          let prefix = "";
-          if (repository === "CoreHTML" || repository === "MESHTML")  { prefix = "@@"; }     
-          link = `@@GUIRepositoryRoot/${prefix}${repository}/${packagesFolder}${dependency}`;          
+          link = `file:../../../../COREHTML/${packagesFolder}${dependency}`;
+        } else if ((dependency.startsWith(this.ctx.packagePrefix))) {    
+          link = `file:../../../../${repository}/${packagesFolder}${dependency}`;          
         } else {
-          
-          link = `@@GUIWepAppRoot/${dependency}`;  
+          link = `${appLibsFolder}${dependency}`;  
         }
-        bowerJSONObject.dependencies[dependency] = link;
+        packageJSONObject.dependencies[dependency] = link;
       });
     } 
-    this.fs.writeJSON(bowerJSONPath, bowerJSONObject);     
+    this.fs.writeJSON(packageJSONPath, packageJSONObject);     
 
-    /** We also want to update the __bower.json of the webApp. if the package prefix starts with "cmf", we are dealing with COREHTML or MESHTML
+    /** We also want to update the package.json of the webApp. if the package prefix starts with "cmf", we are dealing with COREHTML or MESHTML
     * In these cases when linking to the web app, the prefix is not enough, because the webApp is "cmf.core.web" and "cmf.mes.web".
     * if the package being created starts with "cmf" and then "core", we are in COREHTML. If it's cmf.mes, then it's MESHTML. If it does not
-    * start with "cmf", then is a customization scenario. In these cases there's not need to have another name after the prefix. 
+    * start with "cmf", then is a customization scenario. In these cases there's no need to have another name after the prefix. 
     */   
-    this.updateWebAppBowerJSON(`@@GUIRepositoryRoot/${this.destinationRoot().split("\\").pop()}/${packagesFolder}${this.options.packageName}`);   
+    this.updateWebAppPackageJSON(`file:../../${packagesFolder}${this.options.packageName}`);   
 
-    // By updating the webApp's __bower.json we also need to update the config.json file with the new package
+    // By updating the webApp's package.json we also need to update the config.json file with the new package
     let webAppConfigPath = `${this.webAppFolderPath}/config.json`,
       webAppConfigObject = this.fs.readJSON(this.destinationPath(webAppConfigPath));
     if (webAppConfigObject.packages.available.indexOf(this.options.packageName) < 0) {

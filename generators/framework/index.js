@@ -46,7 +46,7 @@ module.exports = class extends HtmlGenerator {
    * Will copy the templates for the framework tailoring all the files with the base framework it's extending from.
    */
   copyTemplates() {    
-    let frameworkConfig = { name : this.options.frameworkName }, templatesToParse = ['__bower.json', 'package.json', 'gulpfile.js', 
+    let frameworkConfig = { name : this.options.frameworkName }, templatesToParse = ['package.json', 'gulpfile.js', 
     { templateBefore: 'src/framework.ts', templateAfter: `src/${this.subFramework.mainModule}.ts`} ,
     { templateBefore: 'src/framework.less', templateAfter: `src/${this.subFramework.mainModule}.less`} ,
     { templateBefore: 'src/domain/config/framework.config.ts', templateAfter: `src/domain/config/${this.subFramework.mainModule}.config.ts`} ,
@@ -59,13 +59,13 @@ module.exports = class extends HtmlGenerator {
         this.fs.copyTpl(this.templatePath(templateBefore), this.destinationPath(`${frameworkFolder}${this.options.frameworkName}/${templateAfter}`), {package:frameworkConfig, superFramework: this.superFramework, subFramework: this.subFramework})
       });   
 
-     // For bower.json we just add cmf.core or cmf.mes
-     let bowerJSONPath = `${frameworkFolder}${this.options.frameworkName}/__bower.json`,
-        bowerJSONObject = this.fs.readJSON(this.destinationPath(bowerJSONPath));
-        bowerJSONObject.dependencies[this.superFramework.name] = `@@GUIWepAppRoot/${this.superFramework.name}`;        
-        this.fs.writeJSON(bowerJSONPath, bowerJSONObject); 
+     // For package.json we just add cmf.core or cmf.mes
+     let packageJSONPath = `${frameworkFolder}${this.options.frameworkName}/package.json`,
+        packageJSONObject = this.fs.readJSON(this.destinationPath(packageJSONPath));
+        packageJSONObject.dependencies[this.superFramework.name] = `file:../../apps/${this.ctx.prefix}.web/${this.ctx.libsFolder}/{this.superFramework.name}`;        
+        this.fs.writeJSON(packageJSONPath, packageJSONObject); 
 
-      this.updateWebAppBowerJSON.call(this, `@@GUIRepositoryRoot/${this.destinationRoot().split("\\").pop()}/src/${this.options.frameworkName}`);   
+      this.updateWebAppPackageJSON.call(this, `file:../../src/${this.options.frameworkName}`);   
 
       // framework package does not need to go into the web App's config.json, as the actual app needs to import the framework.
       // Also the index needs to be updated. For that reason and since this should be a rare generator, we will not automate this step, like it is done for a regular package.
