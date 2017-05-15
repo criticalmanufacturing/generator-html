@@ -77,13 +77,7 @@ module.exports = class extends HtmlGenerator {
     // Let's update the destination package.json with the lbos and any dependencies that may have been defined          
     let packageJSONPath = `${packagesFolder}${this.options.packageName}/package.json`,
     packageJSONObject = this.fs.readJSON(this.destinationPath(packageJSONPath)),
-    appLibsFolder = `file:../../../apps/${this.ctx.packagePrefix}.web/${this.ctx.libsFolder}/`;
-    packageJSONObject.dependencies["cmf.lbos"] = (this.ctx.packagePrefix  === "cmf") ? "file:../../../../Library/HTML/cmf.mes.lbos" : `${appsLibsFolder}cmf.lbos`;
-    if (this.options.packageName.startsWith("cmf.mes") ) {
-      packageJSONObject.dependencies["cmf.mes"] = "file:../../../../MESHTML/src/cmf.mes";  
-    } else if (this.ctx.packagePrefix  !== "cmf") { // Here we are assuming we are customizing on top of mes and not on core. 
-      packageJSONObject.dependencies["cmf.mes"] = `${appsLibsFolder}cmf.mes`;
-    }
+    appLibsFolder = `file:../../../apps/${this.ctx.packagePrefix}.web/node_modules/`;    
     
     if (this.dependencies instanceof Array && this.dependencies.length > 0) {          
       this.dependencies.forEach((dependency) => {
