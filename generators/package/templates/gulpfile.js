@@ -16,7 +16,7 @@ var ctx = {
 var gulpFunction = function(parentGulp, prefix){
     ctx.prefix = prefix;
 
-    var tasks = require('cmf.dev.tasks')(parentGulp, ctx);
+    var tasks = require('@criticalmanufacturing/dev-tasks')(parentGulp, ctx);
     var gulp = tasks.gulp;
     var seq = tasks.plugins.seq;
 
