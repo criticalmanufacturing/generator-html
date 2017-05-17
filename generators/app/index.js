@@ -21,23 +21,15 @@ module.exports = class extends HtmlGenerator {
     	}]).then((answers) => {
         if (typeof answers.packagePrefix === "string" && answers.packagePrefix !== "" && answers.packagePrefix !== "cmf") { 
       	 // Let's update the main.js from the dev.tasks, so this setting is persisted for install and build tasks
-      	 let filePath = ".cmf.dev.tasks.json",
+      	 let filePath = ".dev-tasks.json",
       	 fileContent = this.fs.readJSON(this.destinationPath(filePath));
          fileContent.packagePrefix = answers.packagePrefix;
-      	 this.fs.writeJSON(filePath, fileContent);
-         // Let's update the gulpfile.js 
-         filePath = "gulpfile.js";
-         fileContent = this.fs.read(this.destinationPath(filePath));         
-         // By default we have no extending framework
-         fileContent = fileContent.replace(/var _framework = 'cmf.core'/g, "var _framework = ''");
-         // We can't have references to cmf.core (this will remove all references of cmf.core or cmf.core.web)
-         fileContent = fileContent.replace(/cmf.core/g, `${answers.packagePrefix}`);
-         // By default we have no dependencies or packages         
-         fileContent = fileContent.replace(/var _dependencies[ ]{0,}=[\s\S]*?\]/g, `var _dependencies = []`);
-         fileContent = fileContent.replace(/var _packages[ ]{0,}=[\s\S]*?\]/g, `var _packages = []`);
-         // By default the webApp should have no need to be compiled
-         fileContent = fileContent.replace(/var isWebAppCompilable = true/g, "var isWebAppCompilable = false");
-         this.fs.write(filePath, fileContent);
+         fileContent.framework = "";
+         fileContent.webAppPrefix = answers.packagePrefix;
+         fileContent.isWebAppCompilable = false;
+         fileContent.dependencies = [];
+         fileContent.packages = [];
+      	 this.fs.writeJSON(filePath, fileContent);                  
         }
  	 });
   }

@@ -62,7 +62,7 @@ module.exports = class extends HtmlGenerator {
   * - Will update the package.json with all the dependencies defined for the package
   * - Will update the package.json of the web app so it is aware of this new package
   * - Will update the config.json of the web app, so it loads the new package once it starts
-  * - Will udpate the root's gulpfile.js so when a "gulp install" or "gulp build" is issued at root level, it will also account for the new package.
+  * - Will udpate the root's .dev.tasks.json so when a "gulp install" or "gulp build" is issued at root level, it will also account for the new package.
   */
   copyTemplates() {    
     let packageConfig = { name : this.options.packageName}, templatesToParse = ['package.json', 'gulpfile.js', '.yo-rc.json',
@@ -109,20 +109,11 @@ module.exports = class extends HtmlGenerator {
       this.fs.writeJSON(webAppConfigPath, webAppConfigObject);
     }
 
-    // We also need to update the root's gulpfile.js so this new package is included in the global install and build tasks
-    let rootGulpFile = `${this.destinationPath("gulpfile.js")}`,
-      fileContent = this.fs.read(rootGulpFile),        
-      packagesStringArray = fileContent.match(/var _packages =(.*?);/g);
-    if (packagesStringArray instanceof Array && packagesStringArray.length > 0) {              
-      var _packages = []; // Like always, in strict mode, we are not allowed to introduce new vars into the scope, so we created it first and update it during the eval
-      eval(packagesStringArray[0].replace("var", ""));                
-      if (_packages.indexOf(this.options.packageName) < 0) {
-        _packages.push(this.options.packageName);
-        this.fs.write(rootGulpFile, fileContent.replace(packagesStringArray, `var _packages = ${JSON.stringify(_packages)};`));            
-      }
-    } else {
-      this.log("Couldn't include the new package in the root's gulpfile.js");
-    }     
+    // We also need to update the root's .dev-tasks.js so this new package is included in the global install and build tasks
+    let filePath = `${this.destinationPath(".dev-tasks.json")}`,
+    fileContent = this.fs.readJSON(this.destinationPath(filePath));    
+    fileContent.packages.push(this.options.packageName);
+    this.fs.writeJSON(filePath, fileContent);      
   }
 
   /** 
