@@ -1,6 +1,6 @@
 'use strict';
 var Generator = require('yeoman-generator'),
-    contextBuilder = require('cmf.dev.tasks/main.js'),
+    contextBuilder = require('@criticalmanufacturing/dev-tasks/main.js'),
 		fs = require('fs');
 
 module.exports = class HtmlGenerator extends Generator {
