@@ -79,19 +79,25 @@ module.exports = class extends HtmlGenerator {
     packageJSONObject = this.fs.readJSON(this.destinationPath(packageJSONPath)),
     appLibsFolder = `file:../../../apps/${this.ctx.packagePrefix}.web/node_modules/`;    
     
+    let repository = this.destinationRoot().split("\\").pop();
     if (this.dependencies instanceof Array && this.dependencies.length > 0) {          
       this.dependencies.forEach((dependency) => {
-        let link = null, repository = this.destinationRoot().split("\\").pop();
+        let link = null;
         if (dependency.startsWith("cmf.core") && repository === "MESHTML") {
           link = `file:../../../../COREHTML/${packagesFolder}${dependency}`;
         } else if ((dependency.startsWith(this.ctx.packagePrefix))) {    
-          link = `file:../../../../${repository}/${packagesFolder}${dependency}`;          
+          link = `file:../${dependency}`;          
         } else {
           link = `${appLibsFolder}${dependency}`;  
         }
         packageJSONObject.dependencies[dependency] = link;
       });
     } 
+    // We need one fallback at the end. If we are customizing, we can end up using ony packages from CORE and we need to customize on top of MES
+    if (repository !== "CoreHTML" && repository !== "MESHTML" && !Object.keys(packageJSONObject.dependencies).some(function(dependency) {return dependency.startsWith("cmf.mes")})) {
+      packageJSONObject.dependencies["cmf.mes"] = `${appLibsFolder}cmf.mes`;
+    }
+
     this.fs.writeJSON(packageJSONPath, packageJSONObject);     
 
     /** We also want to update the package.json of the webApp. if the package prefix starts with "cmf", we are dealing with COREHTML or MESHTML
