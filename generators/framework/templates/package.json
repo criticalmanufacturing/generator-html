@@ -2,14 +2,8 @@
   "name": "<%= package.name %>",
   "version": "3.0.0",
   "description": "<%= package.name %> package",
-  "private": true,
   "main": "<%= package.name %>.js",
   "types": "index.d.ts",
-  "repository": {
-    "type": "",
-    "url": ""
-  },
   "dependencies": {},
-  "scripts": {},
-  "devDependencies": {}
+  "cmfLinkDependencies": {}
 }

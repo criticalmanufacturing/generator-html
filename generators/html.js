@@ -29,7 +29,8 @@ module.exports = class HtmlGenerator extends Generator {
         	webAppPackageJSONObject = this.fs.readJSON(this.destinationPath(webAppPackageJSONPath));            
     	this.webAppFolderPath = webAppFolderPath;        
     	if (!(this.options.packageName in webAppPackageJSONObject.dependencies)) {
-    		webAppPackageJSONObject.dependencies[this.options.packageName] = packagePath;
+    		webAppPackageJSONObject.cmfLinkDependencies[this.options.packageName] = packagePath;
+    		webAppPackageJSONObject.dependencies[this.options.packageName] = "dev";
     		this.fs.writeJSON(webAppPackageJSONPath, webAppPackageJSONObject); 	
     	}    	
     	this.webAppFolderPath = webAppFolderPath;    	
