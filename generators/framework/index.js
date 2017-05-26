@@ -52,7 +52,7 @@ module.exports = class extends HtmlGenerator {
     { templateBefore: 'src/domain/config/framework.config.ts', templateAfter: `src/domain/config/${this.subFramework.mainModule}.config.ts`} ,
     'src/domain/component.ts' , 'src/domain/framework.ts', 'src/domain/object.ts', 'src/domain/sandbox.ts'
     ], frameworkFolder = 'src/';
-    this.fs.copy([this.templatePath('**'), '!**/framework.ts', '!**/framework.less', '!**/framework.config.ts'], this.destinationPath(`${frameworkFolder}${this.options.frameworkName}`));
+    this.fs.copy([this.templatePath('**'), this.templatePath('**/.*'), '!**/framework.ts', '!**/framework.less', '!**/framework.config.ts'], this.destinationPath(`${frameworkFolder}${this.options.frameworkName}`));
     templatesToParse.forEach((template) => {
         let templateBefore = typeof template === "string" ? template : template.templateBefore,
         templateAfter = typeof template === "string" ? template : template.templateAfter;

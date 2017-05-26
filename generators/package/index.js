@@ -1,6 +1,7 @@
 'use strict';
 var HtmlGenerator = require('../html.js'),
-  fs = require('fs');
+  fs = require('fs'),
+  context = require('../context.json');
 
 module.exports = class extends HtmlGenerator {
   constructor(args, opts) {
@@ -36,7 +37,7 @@ module.exports = class extends HtmlGenerator {
     // Let's get the list of packages from the current repository and merge them with the list of packages in the webApp
     // We will also exclude some that are always included and therefore, not really relevant to mention
     let webPrefix = this.options.packageName.startsWith("cmf.core") ? "cmf.core" : (this.options.packageName.startsWith("cmf.mes")) ? "cmf.mes" : this.ctx.packagePrefix,      
-    excludeFilter = (folder) => { return folder.startsWith("cmf") && ["cmf.taura", "cmf.core", "cmf.core.multicast.client", "cmf.mes", "cmf.lbos", "cmf.polyfill"].indexOf(folder) < 0 && !folder.startsWith("cmf.style") },
+    excludeFilter = (folder) => { return folder.startsWith("cmf") && ["cmf.taura", "cmf.core", "cmf.core.multicast.client", "cmf.mes", "cmf.lbos", "cmf.polyfill", "cmf.angular"].indexOf(folder) < 0 && !folder.startsWith("cmf.style") },
       repositoryPackages = new Set(fs.readdirSync(this.destinationPath("src/packages"))),
       webAppPackages = new Set(fs.readdirSync(this.destinationPath(`apps/${webPrefix}.web/node_modules`)).filter(excludeFilter)),
       allPackages = repositoryPackages.union(webAppPackages);
@@ -65,9 +66,10 @@ module.exports = class extends HtmlGenerator {
   * - Will udpate the root's .dev.tasks.json so when a "gulp install" or "gulp build" is issued at root level, it will also account for the new package.
   */
   copyTemplates() {    
-    let packageConfig = { name : this.options.packageName}, templatesToParse = ['package.json', 'gulpfile.js', '.yo-rc.json',
+    console.log(this.templatePath('**'));
+    let packageConfig = { name : this.options.packageName}, templatesToParse = ['package.json', 'gulpfile.js', '.yo-rc.json', 
      { templateBefore: 'src/metadata.ts', templateAfter: `src/${packageConfig.name}.metadata.ts`} ], packagesFolder = 'src/packages/';    
-    this.fs.copy([this.templatePath('**'), '!**/metadata.ts'], this.destinationPath(`${packagesFolder}${this.options.packageName}`));
+    this.fs.copy([this.templatePath('**'), this.templatePath('**/.*'), '!**/metadata.ts'], this.destinationPath(`${packagesFolder}${this.options.packageName}`));
     templatesToParse.forEach((template) => {
         let templateBefore = typeof template === "string" ? template : template.templateBefore,
         templateAfter = typeof template === "string" ? template : template.templateAfter;
@@ -91,13 +93,13 @@ module.exports = class extends HtmlGenerator {
           link = `${appLibsFolder}${dependency}`;  
         }
         packageJSONObject.cmfLinkDependencies[dependency] = link;
-        packageJSONObject.dependencies[dependency] = "dev";
+        packageJSONObject.dependencies[dependency] = context.npmTag;
       });
     } 
     // We need one fallback at the end. If we are customizing, we can end up using ony packages from CORE and we need to customize on top of MES
     if (repository !== "CoreHTML" && repository !== "MESHTML" && !Object.keys(packageJSONObject.dependencies).some(function(dependency) {return dependency.startsWith("cmf.mes")})) {
       packageJSONObject.cmfLinkdependencies["cmf.mes"] = `${appLibsFolder}cmf.mes`;
-      packageJSONObject.dependencies["cmf.mes"] = "dev";
+      packageJSONObject.dependencies["cmf.mes"] = context.npmTag;
     }
 
     this.fs.writeJSON(packageJSONPath, packageJSONObject);     

@@ -1,6 +1,6 @@
 {
   "name": "<%= package.name %>",
-  "version": "3.0.0",
+  "version": "0.0.1",
   "description": "<%= package.name %> package",  
   "main": "<%= package.name %>.js",
   "types": "index.d.ts",  

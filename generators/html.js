@@ -1,7 +1,8 @@
 'use strict';
 var Generator = require('yeoman-generator'),
     contextBuilder = require('@criticalmanufacturing/dev-tasks/main.js'),
-		fs = require('fs');
+		fs = require('fs'),
+		context = require('./context.json');
 
 module.exports = class HtmlGenerator extends Generator {
   constructor(args, opts) {
@@ -30,7 +31,7 @@ module.exports = class HtmlGenerator extends Generator {
     	this.webAppFolderPath = webAppFolderPath;        
     	if (!(this.options.packageName in webAppPackageJSONObject.dependencies)) {
     		webAppPackageJSONObject.cmfLinkDependencies[this.options.packageName] = packagePath;
-    		webAppPackageJSONObject.dependencies[this.options.packageName] = "dev";
+    		webAppPackageJSONObject.optionalDependencies[this.options.packageName] = context.npmTag;
     		this.fs.writeJSON(webAppPackageJSONPath, webAppPackageJSONObject); 	
     	}    	
     	this.webAppFolderPath = webAppFolderPath;    	
