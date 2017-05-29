@@ -63,7 +63,7 @@ module.exports = class extends HtmlGenerator {
      let packageJSONPath = `${frameworkFolder}${this.options.frameworkName}/package.json`,
         packageJSONObject = this.fs.readJSON(this.destinationPath(packageJSONPath));
         packageJSONObject.cmfLinkDependencies[this.superFramework.name] = `file:../../apps/${this.ctx.prefix}.web/${this.ctx.libsFolder}/{this.superFramework.name}`;        
-        packageJSONObject.dependencies[this.superFramework.name] = "dev";        
+        packageJSONObject.optionalDependencies[this.superFramework.name] = "dev";        
         this.fs.writeJSON(packageJSONPath, packageJSONObject); 
 
       this.updateWebAppPackageJSON.call(this, `file:../../src/${this.options.frameworkName}`);   

@@ -93,13 +93,13 @@ module.exports = class extends HtmlGenerator {
           link = `${appLibsFolder}${dependency}`;  
         }
         packageJSONObject.cmfLinkDependencies[dependency] = link;
-        packageJSONObject.dependencies[dependency] = context.npmTag;
+        packageJSONObject.optionalDependencies[dependency] = context.npmTag;
       });
     } 
     // We need one fallback at the end. If we are customizing, we can end up using ony packages from CORE and we need to customize on top of MES
-    if (repository !== "CoreHTML" && repository !== "MESHTML" && Object.keys(packageJSONObject.dependencies).some(function(dependency) {return dependency.startsWith("cmf.mes")})) {
-      packageJSONObject.cmfLinkdependencies["cmf.mes"] = `${appLibsFolder}cmf.mes`;
-      packageJSONObject.dependencies["cmf.mes"] = context.npmTag;
+    if (repository !== "CoreHTML" && repository !== "MESHTML" && Object.keys(packageJSONObject.optionalDependencies).some(function(dependency) {return dependency.startsWith("cmf.mes")})) {
+      packageJSONObject.cmfLinkDependencies["cmf.mes"] = `${appLibsFolder}cmf.mes`;
+      packageJSONObject.optionalDependencies["cmf.mes"] = context.npmTag;
     }
 
     this.fs.writeJSON(packageJSONPath, packageJSONObject);     

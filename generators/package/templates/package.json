@@ -5,5 +5,9 @@
   "main": "<%= package.name %>.js",
   "types": "index.d.ts",  
   "dependencies": {},
-  "cmfLinkDependencies" : {}
+  "optionalDependencies": {},
+  "cmfLinkDependencies" : {},
+  "scripts": {
+    "prepublishOnly": "gulp build --production --dist"
+  }
 }
