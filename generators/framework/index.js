@@ -51,8 +51,13 @@ module.exports = class extends HtmlGenerator {
     { templateBefore: 'src/framework.less', templateAfter: `src/${this.subFramework.mainModule}.less`} ,
     { templateBefore: 'src/domain/config/framework.config.ts', templateAfter: `src/domain/config/${this.subFramework.mainModule}.config.ts`} ,
     'src/domain/component.ts' , 'src/domain/framework.ts', 'src/domain/object.ts', 'src/domain/sandbox.ts'
-    ], frameworkFolder = 'src/';
-    this.fs.copy([this.templatePath('**'), this.templatePath('**/.*'), '!**/framework.ts', '!**/framework.less', '!**/framework.config.ts'], this.destinationPath(`${frameworkFolder}${this.options.frameworkName}`));
+    ], frameworkFolder = 'src/',
+    repository = this.destinationRoot().split("\\").pop(), isCustomized = repository !== "CoreHTML" && repository !== "MESHTML",
+     copyArray = [this.templatePath('**'), this.templatePath('.npmignore'), '!**/framework.ts', '!**/framework.less', '!**/framework.config.ts'];
+     if (isCustomized === false) {
+        copyArray.push(this.templatePath('.npmrc'));
+     };
+    this.fs.copy(copyArray, this.destinationPath(`${frameworkFolder}${this.options.frameworkName}`));
     templatesToParse.forEach((template) => {
         let templateBefore = typeof template === "string" ? template : template.templateBefore,
         templateAfter = typeof template === "string" ? template : template.templateAfter;

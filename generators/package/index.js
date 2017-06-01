@@ -6,6 +6,7 @@ var HtmlGenerator = require('../html.js'),
 module.exports = class extends HtmlGenerator {
   constructor(args, opts) {
     super(args, opts);    
+
     this.argument('packageName', { type: String, required: true });
     this.options.packageName = this.camelCaseValue(this.options.packageName);
 
@@ -65,11 +66,15 @@ module.exports = class extends HtmlGenerator {
   * - Will update the config.json of the web app, so it loads the new package once it starts
   * - Will udpate the root's .dev.tasks.json so when a "gulp install" or "gulp build" is issued at root level, it will also account for the new package.
   */
-  copyTemplates() {    
-    console.log(this.templatePath('**'));
+  copyTemplates() {        
     let packageConfig = { name : this.options.packageName}, templatesToParse = ['package.json', 'gulpfile.js', '.yo-rc.json', 
-     { templateBefore: 'src/metadata.ts', templateAfter: `src/${packageConfig.name}.metadata.ts`} ], packagesFolder = 'src/packages/';    
-    this.fs.copy([this.templatePath('**'), this.templatePath('**/.*'), '!**/metadata.ts'], this.destinationPath(`${packagesFolder}${this.options.packageName}`));
+     { templateBefore: 'src/metadata.ts', templateAfter: `src/${packageConfig.name}.metadata.ts`} ], packagesFolder = 'src/packages/', 
+     repository = this.destinationRoot().split("\\").pop(), isCustomized = repository !== "CoreHTML" && repository !== "MESHTML",
+     copyArray = [this.templatePath('**'), this.templatePath('.npmignore'), '!**/metadata.ts'];
+     if (isCustomized === false) {
+        copyArray.push(this.templatePath('.npmrc'));
+     }
+    this.fs.copy(copyArray, this.destinationPath(`${packagesFolder}${this.options.packageName}`));
     templatesToParse.forEach((template) => {
         let templateBefore = typeof template === "string" ? template : template.templateBefore,
         templateAfter = typeof template === "string" ? template : template.templateAfter;
@@ -80,8 +85,7 @@ module.exports = class extends HtmlGenerator {
     let packageJSONPath = `${packagesFolder}${this.options.packageName}/package.json`,
     packageJSONObject = this.fs.readJSON(this.destinationPath(packageJSONPath)),
     appLibsFolder = `file:../../../apps/${this.ctx.packagePrefix}.web/node_modules/`;    
-    
-    let repository = this.destinationRoot().split("\\").pop();
+        
     if (this.dependencies instanceof Array && this.dependencies.length > 0) {          
       this.dependencies.forEach((dependency) => {
         let link = null;
