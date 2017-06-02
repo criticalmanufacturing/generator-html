@@ -1,15 +1,13 @@
 {
   "name": "<%= package.name %>",
-  "version": "3.0.0",
-  "description": "<%= package.name %> package",
-  "private": true,
+  "version": "0.0.1",
+  "description": "<%= package.name %> package",  
   "main": "<%= package.name %>.js",
-  "types": "index.d.ts",
-  "repository": {
-    "type": "",
-    "url": ""
-  },
+  "types": "index.d.ts",  
   "dependencies": {},
-  "scripts": {},
-  "devDependencies": {}
+  "optionalDependencies": {},
+  "cmfLinkDependencies" : {},
+  "scripts": {
+    "prepublishOnly": "gulp build --production --dist"
+  }
 }

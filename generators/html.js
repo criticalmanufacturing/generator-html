@@ -1,7 +1,8 @@
 'use strict';
 var Generator = require('yeoman-generator'),
-    contextBuilder = require('cmf.dev.tasks/main.js'),
-		fs = require('fs');
+    contextBuilder = require('@criticalmanufacturing/dev-tasks/main.js'),
+		fs = require('fs'),
+		context = require('./context.json');
 
 module.exports = class HtmlGenerator extends Generator {
   constructor(args, opts) {
@@ -20,17 +21,18 @@ module.exports = class HtmlGenerator extends Generator {
 	}
 
 	/**
-	 * Updates the web app's __bower.json
+	 * Updates the web app's package.json
 	 */
-  updateWebAppBowerJSON(packagePath) {
+  updateWebAppPackageJSON(packagePath) {
 		let webAppFolderName = (this.options.packageName.startsWith("cmf.core") ? "cmf.core.web" : this.options.packageName.startsWith("cmf.mes") ? "cmf.mes.web" : `${this.ctx.packagePrefix}.web`),
         	webAppFolderPath = `apps/${webAppFolderName}`, 
-        	webAppBowerJSONPath = `${webAppFolderPath}/__bower.json`,        	
-        	webAppBowerJSONObject = this.fs.readJSON(this.destinationPath(webAppBowerJSONPath));            
+        	webAppPackageJSONPath = `${webAppFolderPath}/package.json`,        	
+        	webAppPackageJSONObject = this.fs.readJSON(this.destinationPath(webAppPackageJSONPath));            
     	this.webAppFolderPath = webAppFolderPath;        
-    	if (!(this.options.packageName in webAppBowerJSONObject.dependencies)) {
-    		webAppBowerJSONObject.dependencies[this.options.packageName] = packagePath;
-    		this.fs.writeJSON(webAppBowerJSONPath, webAppBowerJSONObject); 	
+    	if (!(this.options.packageName in webAppPackageJSONObject.optionalDependencies)) {
+    		webAppPackageJSONObject.cmfLinkDependencies[this.options.packageName] = packagePath;
+    		webAppPackageJSONObject.optionalDependencies[this.options.packageName] = context.npmTag;
+    		this.fs.writeJSON(webAppPackageJSONPath, webAppPackageJSONObject); 	
     	}    	
     	this.webAppFolderPath = webAppFolderPath;    	
 	}

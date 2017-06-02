@@ -1,10 +1,12 @@
 'use strict';
 var HtmlGenerator = require('../html.js'),
-  fs = require('fs');
+  fs = require('fs'),
+  context = require('../context.json');
 
 module.exports = class extends HtmlGenerator {
   constructor(args, opts) {
     super(args, opts);    
+
     this.argument('packageName', { type: String, required: true });
     this.options.packageName = this.camelCaseValue(this.options.packageName);
 
@@ -36,7 +38,7 @@ module.exports = class extends HtmlGenerator {
     // Let's get the list of packages from the current repository and merge them with the list of packages in the webApp
     // We will also exclude some that are always included and therefore, not really relevant to mention
     let webPrefix = this.options.packageName.startsWith("cmf.core") ? "cmf.core" : (this.options.packageName.startsWith("cmf.mes")) ? "cmf.mes" : this.ctx.packagePrefix,      
-    excludeFilter = (folder) => { return folder.startsWith("cmf") && ["cmf.taura", "cmf.core", "cmf.core.multicast.client", "cmf.mes", "cmf.lbos", "cmf.polyfill"].indexOf(folder) < 0 && !folder.startsWith("cmf.style") },
+    excludeFilter = (folder) => { return folder.startsWith("cmf") && ["cmf.taura", "cmf.core", "cmf.core.multicast.client", "cmf.mes", "cmf.lbos", "cmf.polyfill", "cmf.angular"].indexOf(folder) < 0 && !folder.startsWith("cmf.style") },
       repositoryPackages = new Set(fs.readdirSync(this.destinationPath("src/packages"))),
       webAppPackages = new Set(fs.readdirSync(this.destinationPath(`apps/${webPrefix}.web/node_modules`)).filter(excludeFilter)),
       allPackages = repositoryPackages.union(webAppPackages);
@@ -59,57 +61,61 @@ module.exports = class extends HtmlGenerator {
   /**
   * This method will perform several tasks such as
   * - Copy all package templates to "src/packages"
-  * - Will update the __bower.json with all the dependencies defined for the package
-  * - Will update the __bower.json of the web app so it is aware of this new package
+  * - Will update the package.json with all the dependencies defined for the package
+  * - Will update the package.json of the web app so it is aware of this new package
   * - Will update the config.json of the web app, so it loads the new package once it starts
-  * - Will udpate the root's gulpfile.js so when a "gulp install" or "gulp build" is issued at root level, it will also account for the new package.
+  * - Will udpate the root's .dev.tasks.json so when a "gulp install" or "gulp build" is issued at root level, it will also account for the new package.
   */
-  copyTemplates() {    
-    let packageConfig = { name : this.options.packageName}, templatesToParse = ['__bower.json', 'package.json', 'gulpfile.js', '.yo-rc.json',
-     { templateBefore: 'src/metadata.ts', templateAfter: `src/${packageConfig.name}.metadata.ts`} ], packagesFolder = 'src/packages/';    
-    this.fs.copy([this.templatePath('**'), '!**/metadata.ts'], this.destinationPath(`${packagesFolder}${this.options.packageName}`));
+  copyTemplates() {        
+    let packageConfig = { name : this.options.packageName}, templatesToParse = ['package.json', 'gulpfile.js', '.yo-rc.json', 
+     { templateBefore: 'src/metadata.ts', templateAfter: `src/${packageConfig.name}.metadata.ts`} ], packagesFolder = 'src/packages/', 
+     repository = this.destinationRoot().split("\\").pop(), isCustomized = repository !== "CoreHTML" && repository !== "MESHTML",
+     copyArray = [this.templatePath('**'), this.templatePath('.npmignore'), '!**/metadata.ts'];
+     if (isCustomized === false) {
+        copyArray.push(this.templatePath('.npmrc'));
+     }
+    this.fs.copy(copyArray, this.destinationPath(`${packagesFolder}${this.options.packageName}`));
     templatesToParse.forEach((template) => {
         let templateBefore = typeof template === "string" ? template : template.templateBefore,
         templateAfter = typeof template === "string" ? template : template.templateAfter;
         this.fs.copyTpl(this.templatePath(templateBefore), this.destinationPath(`${packagesFolder}${this.options.packageName}/${templateAfter}`), {package: packageConfig})
       });   
 
-    // Let's update the destination _bower.json with the lbos and any dependencies that may have been defined          
-    let bowerJSONPath = `${packagesFolder}${this.options.packageName}/__bower.json`,
-    bowerJSONObject = this.fs.readJSON(this.destinationPath(bowerJSONPath));
-    bowerJSONObject.dependencies["cmf.lbos"] = (this.ctx.packagePrefix  === "cmf") ? "@@GUIRepositoryRoot/Library/HTML/cmf.mes.lbos" : "@@GUIWepAppRoot/cmf.lbos";
-    if (this.options.packageName.startsWith("cmf.mes") ) {
-      bowerJSONObject.dependencies["cmf.mes"] = "@@GUIRepositoryRoot/MESHTML/src/cmf.mes";  
-    } else if (this.ctx.packagePrefix  !== "cmf") { // Here we are assuming we are customizing on top of mes and not on core. 
-      bowerJSONObject.dependencies["cmf.mes"] = "@@GUIWepAppRoot/cmf.mes";
-    }
-    
+    // Let's update the destination package.json with the lbos and any dependencies that may have been defined          
+    let packageJSONPath = `${packagesFolder}${this.options.packageName}/package.json`,
+    packageJSONObject = this.fs.readJSON(this.destinationPath(packageJSONPath)),
+    appLibsFolder = `file:../../../apps/${this.ctx.packagePrefix}.web/node_modules/`;    
+        
     if (this.dependencies instanceof Array && this.dependencies.length > 0) {          
       this.dependencies.forEach((dependency) => {
-        let link = null, repository = this.destinationRoot().split("\\").pop();
+        let link = null;
         if (dependency.startsWith("cmf.core") && repository === "MESHTML") {
-          link = `@@GUIRepositoryRoot/COREHTML/${packagesFolder}${dependency}`;
-        } else if ((dependency.startsWith(this.ctx.packagePrefix))) {   
-          let prefix = "";
-          if (repository === "CoreHTML" || repository === "MESHTML")  { prefix = "@@"; }     
-          link = `@@GUIRepositoryRoot/${prefix}${repository}/${packagesFolder}${dependency}`;          
+          link = `file:../../../../COREHTML/${packagesFolder}${dependency}`;
+        } else if ((dependency.startsWith(this.ctx.packagePrefix))) {    
+          link = `file:../${dependency}`;          
         } else {
-          
-          link = `@@GUIWepAppRoot/${dependency}`;  
+          link = `${appLibsFolder}${dependency}`;  
         }
-        bowerJSONObject.dependencies[dependency] = link;
+        packageJSONObject.cmfLinkDependencies[dependency] = link;
+        packageJSONObject.optionalDependencies[dependency] = context.npmTag;
       });
     } 
-    this.fs.writeJSON(bowerJSONPath, bowerJSONObject);     
+    // We need one fallback at the end. If we are customizing, we can end up using ony packages from CORE and we need to customize on top of MES
+    if (repository !== "CoreHTML" && repository !== "MESHTML" && Object.keys(packageJSONObject.optionalDependencies).some(function(dependency) {return dependency.startsWith("cmf.mes")})) {
+      packageJSONObject.cmfLinkDependencies["cmf.mes"] = `${appLibsFolder}cmf.mes`;
+      packageJSONObject.optionalDependencies["cmf.mes"] = context.npmTag;
+    }
 
-    /** We also want to update the __bower.json of the webApp. if the package prefix starts with "cmf", we are dealing with COREHTML or MESHTML
+    this.fs.writeJSON(packageJSONPath, packageJSONObject);     
+
+    /** We also want to update the package.json of the webApp. if the package prefix starts with "cmf", we are dealing with COREHTML or MESHTML
     * In these cases when linking to the web app, the prefix is not enough, because the webApp is "cmf.core.web" and "cmf.mes.web".
     * if the package being created starts with "cmf" and then "core", we are in COREHTML. If it's cmf.mes, then it's MESHTML. If it does not
-    * start with "cmf", then is a customization scenario. In these cases there's not need to have another name after the prefix. 
+    * start with "cmf", then is a customization scenario. In these cases there's no need to have another name after the prefix. 
     */   
-    this.updateWebAppBowerJSON(`@@GUIRepositoryRoot/${this.destinationRoot().split("\\").pop()}/${packagesFolder}${this.options.packageName}`);   
+    this.updateWebAppPackageJSON(`file:../../${packagesFolder}${this.options.packageName}`);   
 
-    // By updating the webApp's __bower.json we also need to update the config.json file with the new package
+    // By updating the webApp's package.json we also need to update the config.json file with the new package
     let webAppConfigPath = `${this.webAppFolderPath}/config.json`,
       webAppConfigObject = this.fs.readJSON(this.destinationPath(webAppConfigPath));
     if (webAppConfigObject.packages.available.indexOf(this.options.packageName) < 0) {
@@ -117,20 +123,11 @@ module.exports = class extends HtmlGenerator {
       this.fs.writeJSON(webAppConfigPath, webAppConfigObject);
     }
 
-    // We also need to update the root's gulpfile.js so this new package is included in the global install and build tasks
-    let rootGulpFile = `${this.destinationPath("gulpfile.js")}`,
-      fileContent = this.fs.read(rootGulpFile),        
-      packagesStringArray = fileContent.match(/var _packages =(.*?);/g);
-    if (packagesStringArray instanceof Array && packagesStringArray.length > 0) {              
-      var _packages = []; // Like always, in strict mode, we are not allowed to introduce new vars into the scope, so we created it first and update it during the eval
-      eval(packagesStringArray[0].replace("var", ""));                
-      if (_packages.indexOf(this.options.packageName) < 0) {
-        _packages.push(this.options.packageName);
-        this.fs.write(rootGulpFile, fileContent.replace(packagesStringArray, `var _packages = ${JSON.stringify(_packages)};`));            
-      }
-    } else {
-      this.log("Couldn't include the new package in the root's gulpfile.js");
-    }     
+    // We also need to update the root's .dev-tasks.js so this new package is included in the global install and build tasks
+    let filePath = `${this.destinationPath(".dev-tasks.json")}`,
+    fileContent = this.fs.readJSON(this.destinationPath(filePath));    
+    fileContent.packages.push(this.options.packageName);
+    this.fs.writeJSON(filePath, fileContent);      
   }
 
   /** 

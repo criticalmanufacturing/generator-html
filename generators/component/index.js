@@ -1,6 +1,5 @@
 'use strict';
-var HtmlGenerator = require('../html.js'),
-    beautify = require('gulp-beautify');  
+var HtmlGenerator = require('../html.js');  
 
 module.exports = class extends HtmlGenerator {
   constructor(args, opts) {
@@ -65,8 +64,7 @@ module.exports = class extends HtmlGenerator {
                   matchedSetting = [routeConfigSetting, routesSetting, flexSetting].find((setting) => fileContent.match(setting.regex)),                  
                   stringToReplace = matchedSetting.unshifter();
                 
-                if (stringToReplace != null) {                  
-                  this.registerTransformStream(beautify({indentSize: 2 })); // Jus clean it up a bit                       
+                if (stringToReplace != null) {                          
                   this.fs.write(metadataFile, fileContent.replace(matchedSetting.regex, stringToReplace));                   
                 } else {
                   this.log("Couldn't find the routes entry in the metadata file");
