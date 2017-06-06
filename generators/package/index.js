@@ -68,18 +68,19 @@ module.exports = class extends HtmlGenerator {
   */
   copyTemplates() {        
     let packageConfig = { name : this.options.packageName}, templatesToParse = ['package.json', 'gulpfile.js', '.yo-rc.json', 
-     { templateBefore: 'src/metadata.ts', templateAfter: `src/${packageConfig.name}.metadata.ts`} ], packagesFolder = 'src/packages/', 
+     { templateBefore: 'src/metadata.ts', templateAfter: `src/${packageConfig.name}.metadata.ts`}, { templateBefore: '__.npmignore', templateAfter: '.npmignore'} ], 
+     packagesFolder = 'src/packages/', 
      repository = this.destinationRoot().split("\\").pop(), isCustomized = repository !== "CoreHTML" && repository !== "MESHTML",
-     copyArray = [this.templatePath('**'), this.templatePath('.npmignore'), '!**/metadata.ts'];
+     copyArray = [this.templatePath('**'), `!${this.templatePath('src/metadata.ts')}`, `!${this.templatePath('__.npmignore')}`, `!${this.templatePath('__.npmrc')}`];
      if (isCustomized === false) {
-        copyArray.push(this.templatePath('.npmrc'));
+        templatesToParse.push({ templateBefore: '__.npmrc', templateAfter: '.npmrc'});
      }
     this.fs.copy(copyArray, this.destinationPath(`${packagesFolder}${this.options.packageName}`));
     templatesToParse.forEach((template) => {
         let templateBefore = typeof template === "string" ? template : template.templateBefore,
         templateAfter = typeof template === "string" ? template : template.templateAfter;
         this.fs.copyTpl(this.templatePath(templateBefore), this.destinationPath(`${packagesFolder}${this.options.packageName}/${templateAfter}`), {package: packageConfig})
-      });   
+      });
 
     // Let's update the destination package.json with the lbos and any dependencies that may have been defined          
     let packageJSONPath = `${packagesFolder}${this.options.packageName}/package.json`,
@@ -126,7 +127,9 @@ module.exports = class extends HtmlGenerator {
     // We also need to update the root's .dev-tasks.js so this new package is included in the global install and build tasks
     let filePath = `${this.destinationPath(".dev-tasks.json")}`,
     fileContent = this.fs.readJSON(this.destinationPath(filePath));    
-    fileContent.packages.push(this.options.packageName);
+    if (fileContent.packages.indexOf(this.options.packageName) < 0) {
+      fileContent.packages.push(this.options.packageName);  
+    }
     this.fs.writeJSON(filePath, fileContent);      
   }
 
