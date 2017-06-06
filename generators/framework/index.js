@@ -49,13 +49,12 @@ module.exports = class extends HtmlGenerator {
     let frameworkConfig = { name : this.options.frameworkName }, templatesToParse = ['package.json', 'gulpfile.js', 
     { templateBefore: 'src/framework.ts', templateAfter: `src/${this.subFramework.mainModule}.ts`} ,
     { templateBefore: 'src/framework.less', templateAfter: `src/${this.subFramework.mainModule}.less`} ,
-    { templateBefore: 'src/domain/config/framework.config.ts', templateAfter: `src/domain/config/${this.subFramework.mainModule}.config.ts`} ,
-    'src/domain/component.ts' , 'src/domain/framework.ts', 'src/domain/object.ts', 'src/domain/sandbox.ts'
-    ], frameworkFolder = 'src/',
+    { templateBefore: 'src/domain/config/framework.config.ts', templateAfter: `src/domain/config/${this.subFramework.mainModule}.config.ts`} ,    'src/domain/component.ts' , 'src/domain/framework.ts', 'src/domain/object.ts', 'src/domain/sandbox.ts',
+    { templateBefore: '__.npmignore', templateAfter: '.npmignore'}], frameworkFolder = 'src/',
     repository = this.destinationRoot().split("\\").pop(), isCustomized = repository !== "CoreHTML" && repository !== "MESHTML",
-     copyArray = [this.templatePath('**'), this.templatePath('.npmignore'), '!**/framework.ts', '!**/framework.less', '!**/framework.config.ts'];
+     copyArray = [this.templatePath('**'), `!${this.templatePath('__.npmignore')}`, `!${this.templatePath('__.npmrc')}`, '!**/framework.ts', '!**/framework.less', '!**/framework.config.ts'];
      if (isCustomized === false) {
-        copyArray.push(this.templatePath('.npmrc'));
+        templatesToParse.push({ templateBefore: '__.npmrc', templateAfter: '.npmrc'});
      };
     this.fs.copy(copyArray, this.destinationPath(`${frameworkFolder}${this.options.frameworkName}`));
     templatesToParse.forEach((template) => {
