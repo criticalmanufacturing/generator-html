@@ -126,7 +126,7 @@ module.exports = class extends HtmlGenerator {
 
     // We also need to update the root's .dev-tasks.js so this new package is included in the global install and build tasks
     let filePath = `${this.destinationPath(".dev-tasks.json")}`,
-    fileContent = this.fs.readJSON(this.destinationPath(filePath));    
+    fileContent = this.fs.readJSON(this.destinationPath(filePath));
     if (fileContent.packages.indexOf(this.options.packageName) < 0) {
       fileContent.packages.push(this.options.packageName);  
     }
