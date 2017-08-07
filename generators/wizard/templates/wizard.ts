@@ -1,44 +1,44 @@
 /** Core */
-import * as Core from "cmf.core/src/core";
+import {Component, Module, CoreComponent} from "cmf.core/src/core";
 import {Cmf} from "cmf.lbos";
- <% if (wizard.isExtendingMes) { %> 
+<% if (wizard.isExtendingMes) { %> 
 /** Mes */
-import * as Mes from "cmf.mes/src/mes";
+import {MesComponent} from "cmf.mes/src/mes";
 <% } %>
 /** Nested modules */
-import {TransactionWizardModule, TransactionWizardInterface, TransactionWizardArgs} from "cmf.core.business.controls/src/directives/transactionWizard/transactionWizard";
+import {TransactionWizardModule, TransactionWizardInterface,
+    TransactionWizardArgs} from "cmf.core.business.controls/src/directives/transactionWizard/transactionWizard";
 
 /** i18n */
-import i18n from "./i18n/<%= wizard.name %>.default"; 
+import i18n from "./i18n/<%= wizard.name %>.default";
 /** Angular */
 import * as ng from "@angular/core";
 
 /**
  * Please provide a meaningful description of this wizard component and how to use it
- * 
+ *
  * ## Inputs
  * * input: Description for Input
- * 
+ *
  * ## Outputs
  * * output: Description for output
- * 
+ *
  * ## Example
- * 
+ *
  * ```html
  * <your-custom-selector [input]="myInputValue" (output)="myOutputValue"></your-custom-selector>
  * ```
  */
-@Core.Component({
+@Component({
     moduleId: __moduleName,
     selector: '<%= wizard.selector %>',
     inputs: [],
-    outputs:[],
+    outputs: [],
     templateUrl: './<%= wizard.name %>.html',
     styleUrls: ["./<%= wizard.name %>.css"],
     assign: { i18n : i18n }
-	
 })
-export class <%= wizard.class %> extends<% if (wizard.isExtendingMes) { %> Mes.MesComponent <% } %><% if (!wizard.isExtendingMes) { %> Core.CoreComponent <% } %>implements ng.OnChanges, TransactionWizardInterface {
+export class <%= wizard.class %> extends<% if (wizard.isExtendingMes) { %> MesComponent <% } %><% if (!wizard.isExtendingMes) { %> CoreComponent <% } %>implements ng.OnChanges, TransactionWizardInterface {
 
     //#region Private properties
 
@@ -48,23 +48,23 @@ export class <%= wizard.class %> extends<% if (wizard.isExtendingMes) { %> Mes.M
 
     //#endregion
 
-    constructor(viewContainerRef: ng.ViewContainerRef) { 
+    constructor(viewContainerRef: ng.ViewContainerRef) {
         super(viewContainerRef);
     }
 
     //#region Private methods
 
-    //#endregion    
+    //#endregion
 
     //#region Public methods
-    
+
     public ngOnChanges(changes: ng.SimpleChanges): void {
-        
+
     }
 
     public prepareDataInput(): Promise<Cmf.Foundation.BusinessOrchestration.BaseInput[]> {
         // Please provide all the inputs objects that need to be fetched when the wizard loads (if required)
-        let inputs: Cmf.Foundation.BusinessOrchestration.BaseInput[] = [];        
+        const inputs: Cmf.Foundation.BusinessOrchestration.BaseInput[] = [];
         return Promise.resolve(inputs);
     }
 
@@ -75,11 +75,11 @@ export class <%= wizard.class %> extends<% if (wizard.isExtendingMes) { %> Mes.M
 
     public prepareTransactionInput(args: TransactionWizardArgs): Promise<Cmf.Foundation.BusinessOrchestration.BaseInput> {
         // Please provide the input object for the last service call
-        let input: Cmf.Foundation.BusinessOrchestration.BaseInput = null;        
+        const input: Cmf.Foundation.BusinessOrchestration.BaseInput = null;
         return Promise.resolve(input);
     }
 
-    public handleTransactionOutput(output: Cmf.Foundation.BusinessOrchestration.BaseOutput): Promise<void> {        
+    public handleTransactionOutput(output: Cmf.Foundation.BusinessOrchestration.BaseOutput): Promise<void> {
         // Please handle all the output of the last service call (if required)
         return null;
     }
@@ -87,12 +87,12 @@ export class <%= wizard.class %> extends<% if (wizard.isExtendingMes) { %> Mes.M
     //#endregion
 }
 
-@Core.Module({
+@Module({
     imports: [
-        TransactionWizardModule        
+        TransactionWizardModule
     ],
-    declarations: [<%= wizard.class %>],  
+    declarations: [<%= wizard.class %>],
     defaultRoute:  <%= wizard.class %>,
-    exports: [<%= wizard.class %>]    
+    exports: [<%= wizard.class %>]
 })
 export class <%= wizard.class %>Module { }

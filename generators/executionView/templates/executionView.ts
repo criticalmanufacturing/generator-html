@@ -1,44 +1,44 @@
 /** Core */
-import * as Core from "cmf.core/src/core";
+import {Component, Module, CoreComponent} from "cmf.core/src/core";
 import {Cmf} from "cmf.lbos";
- <% if (executionView.isExtendingMes) { %> 
+<% if (executionView.isExtendingMes) { %> 
 /** Mes */
-import * as Mes from "cmf.mes/src/mes";
+import {MesComponent} from "cmf.mes/src/mes";
 <% } %>
 /** Nested modules */
-import {TransactionExecutionViewModule, TransactionExecutionViewInterface, TransactionExecutionViewArgs} from "cmf.core.business.controls/src/directives/transactionExecutionView/transactionExecutionView";
+import {TransactionExecutionViewModule, TransactionExecutionViewInterface,
+    TransactionExecutionViewArgs} from "cmf.core.business.controls/src/directives/transactionExecutionView/transactionExecutionView";
 
 /** i18n */
-import i18n from "./i18n/<%= executionView.name %>.default"; 
+import i18n from "./i18n/<%= executionView.name %>.default";
 /** Angular */
 import * as ng from "@angular/core";
 
 /**
  * Please provide a meaningful description of this execution view component and how to use it
- * 
+ *
  * ## Inputs
  * * input: Description for Input
- * 
+ *
  * ## Outputs
  * * output: Description for output
- * 
+ *
  * ## Example
- * 
+ *
  * ```html
  * <your-custom-selector [input]="myInputValue" (output)="myOutputValue"></your-custom-selector>
  * ```
  */
-@Core.Component({
+@Component({
     moduleId: __moduleName,
     selector: '<%= executionView.selector %>',
     inputs: [],
-    outputs:[],
+    outputs: [],
     templateUrl: './<%= executionView.name %>.html',
     styleUrls: ["./<%= executionView.name %>.css"],
     assign: { i18n : i18n }
-	
 })
-export class <%= executionView.class %> extends<% if (executionView.isExtendingMes) { %> Mes.MesComponent <% } %><% if (!executionView.isExtendingMes) { %> Core.CoreComponent <% } %>implements ng.OnChanges, TransactionExecutionViewInterface {
+export class <%= executionView.class %> extends<% if (executionView.isExtendingMes) { %> MesComponent <% } %><% if (!executionView.isExtendingMes) { %> CoreComponent <% } %>implements ng.OnChanges, TransactionExecutionViewInterface {
 
     //#region Private properties
 
@@ -48,23 +48,21 @@ export class <%= executionView.class %> extends<% if (executionView.isExtendingM
 
     //#endregion
 
-    constructor(viewContainerRef: ng.ViewContainerRef) { 
+    constructor(viewContainerRef: ng.ViewContainerRef) {
         super(viewContainerRef);
     }
 
     //#region Private methods
 
-    //#endregion    
+    //#endregion
 
     //#region Public methods
-    
-    public ngOnChanges(changes: ng.SimpleChanges): void {
-        
-    }
+
+    public ngOnChanges(changes: ng.SimpleChanges): void {}
 
     public prepareDataInput(): Promise<Cmf.Foundation.BusinessOrchestration.BaseInput[]> {
         // Please provide all the inputs objects that need to be fetched when the ExecutionView loads (if required)
-        let inputs: Cmf.Foundation.BusinessOrchestration.BaseInput[] = [];        
+        const inputs: Cmf.Foundation.BusinessOrchestration.BaseInput[] = [];
         return Promise.resolve(inputs);
     }
 
@@ -75,11 +73,11 @@ export class <%= executionView.class %> extends<% if (executionView.isExtendingM
 
     public prepareTransactionInput(args: TransactionExecutionViewArgs): Promise<Cmf.Foundation.BusinessOrchestration.BaseInput> {
         // Please provide the input object for the last service call
-        let input: Cmf.Foundation.BusinessOrchestration.BaseInput = null;        
+        const input: Cmf.Foundation.BusinessOrchestration.BaseInput = null;
         return Promise.resolve(input);
     }
 
-    public handleTransactionOutput(output: Cmf.Foundation.BusinessOrchestration.BaseOutput): Promise<void> {        
+    public handleTransactionOutput(output: Cmf.Foundation.BusinessOrchestration.BaseOutput): Promise<void> {
         // Please handle all the output of the last service call (if required)
         return null;
     }
@@ -87,12 +85,12 @@ export class <%= executionView.class %> extends<% if (executionView.isExtendingM
     //#endregion
 }
 
-@Core.Module({
+@Module({
     imports: [
-        TransactionExecutionViewModule        
+        TransactionExecutionViewModule
     ],
-    declarations: [<%= executionView.class %>],  
+    declarations: [<%= executionView.class %>],
     defaultRoute:  <%= executionView.class %>,
-    exports: [<%= executionView.class %>]    
+    exports: [<%= executionView.class %>]
 })
 export class <%= executionView.class %>Module { }

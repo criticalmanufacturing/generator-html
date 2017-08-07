@@ -1,5 +1,5 @@
 /** Core */
-import * as Core from "cmf.core/src/core";
+import {Module, Generic} from "cmf.core/src/core";
 /** Angular */
 import {PipeTransform, Pipe, ViewContainerRef} from "@angular/core";
 
@@ -12,7 +12,7 @@ import {PipeTransform, Pipe, ViewContainerRef} from "@angular/core";
     name: '<%= pipe.name %>',
     pure: true
 })
-export class <%= pipe.class %> extends Core.Generic implements PipeTransform {
+export class <%= pipe.class %> extends Generic implements PipeTransform {
 
     //#region Private properties
 
@@ -29,18 +29,16 @@ export class <%= pipe.class %> extends Core.Generic implements PipeTransform {
         return value;
     }
 
-    //#endregion    
+    //#endregion
 
     //#region Public methods
 
     //#endregion
 }
 
-@Core.Module({
-    imports: [
-        
-    ],
-    declarations: [<%= pipe.class %>],   
-    exports: [<%= pipe.class %>]    
+@Module({
+    imports: [],
+    declarations: [<%= pipe.class %>],
+    exports: [<%= pipe.class %>]
 })
 export class <%= pipe.class %>Module { }

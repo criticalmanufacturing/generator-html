@@ -1,5 +1,5 @@
 /** Core */
-import * as Core from "cmf.core/src/core";
+import {Directive, Module, Generic} from "cmf.core/src/core";
 /** Angular */
 import * as ng from "@angular/core";
 
@@ -7,12 +7,12 @@ import * as ng from "@angular/core";
  * Please provide a meaningful description of this directive and how to use it
  *
  */
-@Core.Directive({
+@Directive({
     selector: '[<%=directive.selector %>]',
     inputs: [],
-    outputs:[]
+    outputs: []
 })
-export class <%= directive.class %> extends Core.Generic {
+export class <%= directive.class %> extends Generic {
 
     //#region Private properties
 
@@ -22,24 +22,22 @@ export class <%= directive.class %> extends Core.Generic {
 
     //#endregion
 
-    constructor(viewContainerRef: ng.ViewContainerRef) { 
+    constructor(viewContainerRef: ng.ViewContainerRef) {
         super(viewContainerRef);
     }
 
     //#region Private methods
 
-    //#endregion    
+    //#endregion
 
     //#region Public methods
 
     //#endregion
 }
 
-@Core.Module({
-    imports: [
-        
-    ],
-    declarations: [<%= directive.class %>],   
-    exports: [<%= directive.class %>]    
+@Module({
+    imports: [],
+    declarations: [<%= directive.class %>],
+    exports: [<%= directive.class %>]
 })
 export class <%= directive.class %>Module { }
