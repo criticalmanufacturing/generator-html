@@ -12,7 +12,7 @@ module.exports = class extends HtmlGenerator {
   copyTemplates() {
     var copyAndParse = (packageName, packageFolder) => {
  
-        let executionViewClass = `executionView${this.options.executionViewName.charAt(0).toUpperCase()}${this.options.executionViewName.slice(1)}`,
+        let executionViewClass = `ExecutionView${this.options.executionViewName.charAt(0).toUpperCase()}${this.options.executionViewName.slice(1)}`,
         executionViewCamel = `${executionViewClass.charAt(0).toLowerCase()}${executionViewClass.slice(1)}`,
         executionView = {
           name: executionViewCamel,

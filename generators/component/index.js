@@ -62,7 +62,7 @@ module.exports = class extends HtmlGenerator {
                   routesSetting = { regex: /routes[ ]{0,}:[\s\S]*?\[/, unshifter: () => {return `routes: [\n{\n\n${routeConfigSetting.unshifter()}]\n}\n`} },
                   flexSetting = { regex: /flex[ ]{0,}:[\s\S]*?\{/, unshifter: () => {return `flex: {\n${routesSetting.unshifter()}],\n`} },                                    
                   matchedSetting = [routeConfigSetting, routesSetting, flexSetting].find((setting) => fileContent.match(setting.regex)),                  
-                  stringToReplace = matchedSetting.unshifter();
+                  stringToReplace = matchedSetting.unshifter() + " ";
                 
                 if (stringToReplace != null) {                          
                   this.fs.write(metadataFile, fileContent.replace(matchedSetting.regex, stringToReplace));                   
