@@ -6,7 +6,7 @@ import {MesComponent} from "cmf.mes/src/mes";
 <% } %>
 /** Nested modules */
 <% if (!widget.isADashboardWidget) { %> import * as Widget from "cmf.core.dashboards/src/widgets/widget/widget";<% } %>
-<% if (widget.isADashboardWidget) { %> import * as Widget from "../widget/widget"; <% } %>
+<% if (widget.isADashboardWidget) { %> import * as Widget from "../widget/widget";<% } %>
 import { <%= widget.class %>SettingsModule, <%= widget.class %>Settings } from "./<%= widget.name %>Settings";
 /** i18n */
 import i18n from "./i18n/<%= widget.name %>.default";
