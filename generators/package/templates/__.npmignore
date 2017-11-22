@@ -10,3 +10,4 @@ gulpfile.js
 /*.csproj
 /*.config
 /*.defaults
+!/npm-shrinkwrap.json
