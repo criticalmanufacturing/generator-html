@@ -1,9 +1,11 @@
 //#region Imports
+<% if (!component.isExtendingMes) { %>
 /** Core */
 import {Component, Module, CoreComponent} from "cmf.core/src/core";
-<% if (component.isExtendingMes) { %> 
+<% } %>
+<% if (component.isExtendingMes) { %>
 /** Mes */
-import {MesComponent} from "cmf.mes/src/mes";
+import {Component, Module, MesComponent} from "cmf.mes/src/mes";
 <% } %>
 /** Nested modules */
 
@@ -55,7 +57,7 @@ import * as ng from "@angular/core";
  * To use the component, assume this HTML Template as an example:
  *
  * ```HTML
- * <your-custom-selector [input]="myInputValue" (output)="myOutputValue"></your-custom-selector>
+ * <<%= component.selector %> [input]="myInputValue" (output)="myOutputValue"></<%= component.selector %>>
  * ```
  *
  * ### _NOTES_ (optional)
@@ -130,8 +132,8 @@ export class <%= component.class %> extends<% if (component.isExtendingMes) { %>
 @Module({
     imports: [
     ],
-    declarations: [<%= component.class %>],
-    <% if (component.isRoutable) { %>defaultRoute: <%= component.class %>,<% } %>
+    declarations: [<%= component.class %>],<% if (component.isRoutable) { %>
+    defaultRoute: <%= component.class %>,<% } %>
     exports: [<%= component.class %>]
 })
 export class <%= component.class %>Module { }

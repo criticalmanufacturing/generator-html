@@ -1,5 +1,6 @@
 'use strict';
-var HtmlGenerator = require('../html.js');  
+var HtmlGenerator = require('../html.js');
+var path = require('path');
 
 module.exports = class extends HtmlGenerator {
   constructor(args, opts) {
@@ -27,7 +28,9 @@ module.exports = class extends HtmlGenerator {
         name    : 'isRoutable',
         message : `Will this component be accessible via url?`
         }]).then((answers) => {
-          
+
+          const packageConfig = require(path.resolve(path.join(packageFolder, "../../package.json")));
+
           let componentClass = `${this.options.componentName.charAt(0).toUpperCase()}${this.options.componentName.slice(1)}`,
           component = {
             name: this.options.componentName,
@@ -35,7 +38,7 @@ module.exports = class extends HtmlGenerator {
             selector: `${packageName.split(".").join("-")}-${this.options.componentName}`,
             package: packageName,
             isRoutable: answers.isRoutable,
-            isExtendingMes : (packageName.startsWith("cmf.core")) ? false : true
+            isExtendingMes: (packageConfig.dependencies && "cmf.mes" in packageConfig.dependencies) || (packageConfig.optionalDependencies && "cmf.mes" in packageConfig.optionalDependencies)
           };
           this.componentClass = componentClass;
           this.isRoutable = component.isRoutable;
@@ -58,18 +61,18 @@ module.exports = class extends HtmlGenerator {
                 // This algorithm will make sure all situations are accounted. It will unshift the result instead of pushing as it would way more complicated to know where the array of literal end
                 let metadataFile = this.destinationPath(`${packageFolder}/../${packageName}.metadata.ts`),
                   fileContent = this.fs.read(metadataFile),   
-                  routeConfigSetting =  { regex: /routeConfig[ ]{0,}:[\s\S]*?\[/, unshifter : () => {return `routeConfig : [{ path: "${answers.url}", loadChildren: ` + "`${packageName}/src/components/" + `${this.options.componentName}/${this.options.componentName}#${this.componentClass}Module` + "`" + `, data: { title: "${this.componentClass}"} },`} },     
+                  routeConfigSetting = { regex: /routeConfig[ ]{0,}:[\s\S]*?\[/, unshifter : () => {return `routeConfig: [\n{path: "${answers.url}", loadChildren: ` + "`${packageName}/src/components/" + `${this.options.componentName}/${this.options.componentName}#${this.componentClass}Module` + "`" + `, data: {title: "${this.componentClass}"}},\n`} },     
                   routesSetting = { regex: /routes[ ]{0,}:[\s\S]*?\[/, unshifter: () => {return `routes: [\n{\n\n${routeConfigSetting.unshifter()}]\n}\n`} },
                   flexSetting = { regex: /flex[ ]{0,}:[\s\S]*?\{/, unshifter: () => {return `flex: {\n${routesSetting.unshifter()}],\n`} },                                    
                   matchedSetting = [routeConfigSetting, routesSetting, flexSetting].find((setting) => fileContent.match(setting.regex)),                  
-                  stringToReplace = matchedSetting.unshifter() + " ";
+                  stringToReplace = matchedSetting.unshifter();
                 
                 if (stringToReplace != null) {                          
                   this.fs.write(metadataFile, fileContent.replace(matchedSetting.regex, stringToReplace));                   
                 } else {
                   this.log("Couldn't find the routes entry in the metadata file");
                 }                  
-                copyAndBuild();                 
+                copyAndBuild();
               }
             });
           } else {            
