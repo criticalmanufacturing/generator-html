@@ -1,23 +1,24 @@
-﻿var localGulp = require('gulp');
+var localGulp = require('gulp');
 
+//place your config here
 var ctx = {
-    packageName: '<%= package.name %>',
-    deployFolder: '/',
-    baseDir: __dirname,
+    packageName: '<%= package %>',
+    baseDir: __dirname,    
     libsFolder: 'node_modules/',
     localLibsFolder: 'local_libs/',
     tempFolder: 'temp/',
-    testFolder: 'test/',
     sourceFolder: 'src/',
-    cssBundle: true
+    project: '<%= package %>.csproj',
+    type: 'webApp',
+    defaultPort: 7000,
 };
 
 var gulpFunction = function (parentGulp, prefix) {
     ctx.prefix = prefix;
 
-    var tasks = require('@criticalmanufacturing/dev-tasks')(parentGulp, ctx);
-    var gulp = tasks.gulp;
-    var seq = tasks.plugins.seq;
+    var tasks =  require('@criticalmanufacturing/dev-tasks')(parentGulp, ctx);
+
+    tasks.tasks.web(tasks.plugins.gulpWrapper, ctx);
 
     return tasks;
 };

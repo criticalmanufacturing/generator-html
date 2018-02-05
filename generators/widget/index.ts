@@ -1,7 +1,10 @@
-'use strict';
-var HtmlGenerator = require('../html.js');
+import { HtmlGenerator } from "../html";
 
-module.exports = class extends HtmlGenerator {
+export = class extends HtmlGenerator {
+
+  options: {
+    widgetName: string
+  }
 
   constructor(args, opts) {
     super(args, opts);

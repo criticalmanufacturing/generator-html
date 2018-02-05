@@ -1,7 +1,11 @@
-'use strict';
-var HtmlGenerator = require('../html.js');
+import { HtmlGenerator } from "../html";
 
-module.exports = class extends HtmlGenerator {
+export = class extends HtmlGenerator {
+
+  options: {
+    directiveName: string
+  }
+
   constructor(args, opts) {
     super(args, opts);
     this.argument('directiveName', { type: String, required: true });
@@ -27,4 +31,4 @@ module.exports = class extends HtmlGenerator {
 
     this.copyAndParse("directives", copyAndParse);    
   }
-};
+}

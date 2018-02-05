@@ -1,16 +1,37 @@
-'use strict';
-var Generator = require('yeoman-generator'),
-    contextBuilder = require('@criticalmanufacturing/dev-tasks/main.js'),
-		fs = require('fs'),
-		context = require('./context.json');
+import * as Generator from 'yeoman-generator';
+import * as fs from "fs";
+import * as path from "path";
+var contextBuilder = require('@criticalmanufacturing/dev-tasks/main.js');
+var context = require('./context.json');
 
-module.exports = class HtmlGenerator extends Generator {
+export class HtmlGenerator extends Generator {
+	
+	ctx: {
+		prefix: string,
+		libsFolder: string,
+		packagePrefix: string,
+		isCustomized: boolean,
+		metadataFileName: string,
+		metadata: any,
+		__config: any,
+		__repositoryRoot: string,
+		__projectName: string
+	};
+
+	options: any;
+
+	get webAppFoldersPath(): string[] {
+		const appPath = path.join(this.ctx.__repositoryRoot, "app");
+		// Read the folders in it
+		const directories = fs.readdirSync(appPath);
+		return directories;
+	}
+	
   constructor(args, opts) {
-    super(args, opts);		
-    this.conflicter.force = true;    
-		this.ctx = {};
+    super(args, opts);
+		this.ctx = <any>{};
     // Javascript at its best
-    contextBuilder.call(this, null, this.ctx);   
+    contextBuilder.call(this, null, this.ctx);
   }
 
 	/**
@@ -24,17 +45,16 @@ module.exports = class HtmlGenerator extends Generator {
 	 * Updates the web app's package.json
 	 */
   updateWebAppPackageJSON(packagePath) {
-		let webAppFolderName = (this.options.packageName.startsWith("cmf.core") ? "cmf.core.web" : this.options.packageName.startsWith("cmf.mes") ? "cmf.mes.web" : `${this.ctx.packagePrefix}.web`),
-        	webAppFolderPath = `apps/${webAppFolderName}`, 
-        	webAppPackageJSONPath = `${webAppFolderPath}/package.json`,        	
-        	webAppPackageJSONObject = this.fs.readJSON(this.destinationPath(webAppPackageJSONPath));            
-    	this.webAppFolderPath = webAppFolderPath;        
-    	if (!(this.options.packageName in webAppPackageJSONObject.optionalDependencies)) {
-    		webAppPackageJSONObject.cmfLinkDependencies[this.options.packageName] = packagePath;
-    		webAppPackageJSONObject.optionalDependencies[this.options.packageName] = context.npmTag;
-    		this.fs.writeJSON(webAppPackageJSONPath, webAppPackageJSONObject); 	
-    	}    	
-    	this.webAppFolderPath = webAppFolderPath;    	
+		this.webAppFoldersPath.forEach((webAppFolderPath) => {
+			const webAppPackageJSONPath = path.join(webAppFolderPath, "package.json");
+			const webAppPackageJSONObject = this.fs.readJSON(this.destinationPath(webAppPackageJSONPath));
+		
+			if (!(this.options.packageName in webAppPackageJSONObject.optionalDependencies)) {
+				webAppPackageJSONObject.cmfLinkDependencies[this.options.packageName] = packagePath;
+				webAppPackageJSONObject.optionalDependencies[this.options.packageName] = context.npmTag;
+				this.fs.writeJSON(webAppPackageJSONPath, webAppPackageJSONObject); 	
+			}
+		})
 	}
 
 	/**
@@ -44,13 +64,24 @@ module.exports = class HtmlGenerator extends Generator {
 		// Finally, we need to "gulp install", so the both the package and webApp are ready. We could do a global install, but it seems a bit overhead, so:
 		// 1 - Install the new package from its folder
 		// 2 - Install the web app from its folder
+
+		// Save root package
 		let rootPath = this.destinationRoot();
+
+		// Install in the package
 		this.destinationRoot(packagePath);
-		let ls = this.spawnCommand('gulp', ['install']);        
+		let ls = this.spawnCommand('gulp', ['install']);
+
 		ls.on('close', (code) => {
-			this.destinationRoot(`${rootPath}/${this.webAppFolderPath}`);
-			this.spawnCommand('gulp', ['install']);          
-		});    
+			// Install in all apps
+			this.webAppFoldersPath.forEach((appFolderPath) => {
+				this.destinationRoot(appFolderPath);
+				this.spawnCommand('gulp', ['install']);
+			});
+		});
+
+		// Restore
+		this.destinationRoot(rootPath);
 	}
 
 	/**
@@ -60,7 +91,7 @@ module.exports = class HtmlGenerator extends Generator {
 		if (typeof this.config.get("package") === "string") {
       		copyAndParseDelegate(this.config.get("package"), `src/${packageInnerFolder}/`);
     	} else if (this.config.get("isRoot") === true) {
-				let repositoryPackages = fs.readdirSync(this.destinationPath("src/packages")).filter((pkg) => !pkg.startsWith("."));				
+				let repositoryPackages = fs.readdirSync(this.destinationPath("src/packages")).filter((pkg) => !(pkg.indexOf(".") === 0));				
 	      this.prompt([{
 	        type    : 'list',
 	        name    : 'package',

@@ -1,8 +1,6 @@
-'use strict';
-var HtmlGenerator = require('../html.js'),
-    beautify = require('gulp-beautify');  
+import { HtmlGenerator } from "../html";
 
-module.exports = class extends HtmlGenerator {
+export = class extends HtmlGenerator {
   constructor(args, opts) {
     super(args, opts);    
     this.argument('executionViewName', { type: String, required: true });
@@ -25,4 +23,4 @@ module.exports = class extends HtmlGenerator {
       } 
       this.copyAndParse("components", copyAndParse);    
   }
-};
+}

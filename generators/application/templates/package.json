@@ -1,0 +1,15 @@
+{
+  "name": "<%= package %>",
+  "version": "0.0.1",
+  "description": "<%= package %> package",
+  "dependencies": {
+    <% if (basePackage && channel) { %>
+    "<%= basePackage %>": "<%= channel %>"
+    <% } %>
+  },
+  "optionalDependencies": {},
+  "cmfLinkDependencies" : {},
+  "publishConfig": {
+    "registry": "<%= registry %>"
+  }
+}

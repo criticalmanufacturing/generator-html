@@ -1,9 +1,16 @@
-'use strict';
-var HtmlGenerator = require('../html.js'),
-  fs = require('fs'),
-  context = require('../context.json');
+import { HtmlGenerator } from "../html";
+import * as fs from "fs";
+import * as path from "path";
+var context = require('../context.json');
 
 module.exports = class extends HtmlGenerator {
+
+  options: {
+    packageName: string
+  }
+
+  dependencies: string[];
+  
   constructor(args, opts) {
     super(args, opts);    
 
@@ -12,7 +19,7 @@ module.exports = class extends HtmlGenerator {
 
     // If this command was not executed from the root, exit    
     if (this.config.get("isRoot") !== true) {
-      this.env.error("Please execute this command outside a package. Hint: use the root of the repository.");      
+      this.env.error(new Error("Please execute this command outside a package. Hint: use the root of the repository."));
     } 
   }
 
@@ -20,14 +27,14 @@ module.exports = class extends HtmlGenerator {
   * Will prompt the user with all the dependencies that this new package may have.  
   */
   prompting() {
-    Set.prototype.union = function(setB) {
+    (<any>Set.prototype).union = function(setB) {
       var union = new Set(this);
       for (var elem of setB) {
           union.add(elem);
       }
       return union;
     };
-    Set.prototype.difference = function(setB) {
+    (<any>Set.prototype).difference = function(setB) {
       var difference = new Set(this);
       for (var elem of setB) {
         difference.delete(elem);
@@ -41,19 +48,19 @@ module.exports = class extends HtmlGenerator {
     excludeFilter = (folder) => { return folder.startsWith("cmf") && ["cmf.taura", "cmf.core", "cmf.core.multicast.client", "cmf.mes", "cmf.lbos", "cmf.polyfill", "cmf.angular"].indexOf(folder) < 0 && !folder.startsWith("cmf.style") },
       repositoryPackages = new Set(fs.readdirSync(this.destinationPath("src/packages"))),
       webAppPackages = new Set(fs.readdirSync(this.destinationPath(`apps/${webPrefix}.web/node_modules`)).filter(excludeFilter)),
-      allPackages = repositoryPackages.union(webAppPackages);
+      allPackages = (<any>repositoryPackages).union(webAppPackages);
     
 
     return this.prompt([{
       type    : 'checkbox',
       name    : 'dependencies',      
       message : `Select dependencies`,
-      choices: Array.from(allPackages).filter((pkg) => !pkg.startsWith(".")).sort().map((pkg) => {return {name: pkg, value: pkg}}),
+      choices: Array.from(allPackages).filter((pkg) => !(<string>pkg).startsWith(".")).sort().map((pkg) => {return pkg}),
       pageSize: 20, // We can set up the pageSize attribute but there’s a PR opened ATM to make the height match the terminal height. Soon this won’t be necessary
       default : null
     }]).then((answers) => {
       if (answers.dependencies instanceof Array && answers.dependencies.length > 0) {        
-        this.dependencies = answers.dependencies.filter((entry) => entry !== "");        
+        this.dependencies = answers.dependencies.filter((entry) => entry !== "");
       }
     });
   }
@@ -75,7 +82,7 @@ module.exports = class extends HtmlGenerator {
      if (isCustomized === false) {
         templatesToParse.push({ templateBefore: '__.npmrc', templateAfter: '.npmrc'});
      }
-    this.fs.copy(copyArray, this.destinationPath(`${packagesFolder}${this.options.packageName}`));
+    this.fs.copy(<any>copyArray, this.destinationPath(`${packagesFolder}${this.options.packageName}`));
     templatesToParse.forEach((template) => {
         let templateBefore = typeof template === "string" ? template : template.templateBefore,
         templateAfter = typeof template === "string" ? template : template.templateAfter;
@@ -89,7 +96,7 @@ module.exports = class extends HtmlGenerator {
         
     if (this.dependencies instanceof Array && this.dependencies.length > 0) {          
       this.dependencies.forEach((dependency) => {
-        let link = null;
+        let link: string;
         if (dependency.startsWith("cmf.core") && repository === "MESHTML") {
           link = `file:../../../../COREHTML/${packagesFolder}${dependency}`;
         } else if ((dependency.startsWith(this.ctx.packagePrefix))) {    
@@ -117,12 +124,15 @@ module.exports = class extends HtmlGenerator {
     this.updateWebAppPackageJSON(`file:../../${packagesFolder}${this.options.packageName}`);   
 
     // By updating the webApp's package.json we also need to update the config.json file with the new package
-    let webAppConfigPath = `${this.webAppFolderPath}/config.json`,
-      webAppConfigObject = this.fs.readJSON(this.destinationPath(webAppConfigPath));
-    if (webAppConfigObject.packages.available.indexOf(this.options.packageName) < 0) {
-      webAppConfigObject.packages.available.push(this.options.packageName);
-      this.fs.writeJSON(webAppConfigPath, webAppConfigObject);
-    }
+    this.webAppFoldersPath.forEach(webAppFolderPath => {
+      const webAppConfigPath = path.join(webAppFolderPath, "config.json");
+      const webAppConfigObject = this.fs.readJSON(this.destinationPath(webAppConfigPath));
+
+      if (webAppConfigObject.packages.available.indexOf(this.options.packageName) < 0) {
+        webAppConfigObject.packages.available.push(this.options.packageName);
+        this.fs.writeJSON(webAppConfigPath, webAppConfigObject);
+      }
+    });
 
     // We also need to update the root's .dev-tasks.js so this new package is included in the global install and build tasks
     let filePath = `${this.destinationPath(".dev-tasks.json")}`,
@@ -139,4 +149,4 @@ module.exports = class extends HtmlGenerator {
   install() {
     this["__proto__"]["__proto__"].install.call(this, `src/packages/${this.options.packageName}`);  
   }
-};
+}

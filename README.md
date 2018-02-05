@@ -23,12 +23,12 @@ This will ask you for your client prefix. This prefix is the starting name of al
 
 The available templates are:
 
-### App
+### Application
 
 On the root of your package, just open a terminal and run:
 
 ```
-yo @criticalmanufacturing/html:app {appName}
+yo @criticalmanufacturing/html:application {appName}
 ```
 
 ### Component

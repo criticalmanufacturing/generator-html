@@ -1,7 +1,14 @@
-'use strict';
-var HtmlGenerator = require('../html.js'); 
+import { HtmlGenerator } from "../html";
 
-module.exports = class extends HtmlGenerator {
+export = class extends HtmlGenerator {
+
+  options: {
+    frameworkName: string
+  }
+
+  superFramework: any;
+  subFramework: any;
+
   constructor(args, opts) {
     super(args, opts);    
     this.argument('frameworkName', { type: String, required: true });
@@ -9,7 +16,7 @@ module.exports = class extends HtmlGenerator {
 
     // If this command was not executed from the root, exit    
     if (this.config.get("isRoot") !== true) {
-      this.env.error("Please execute this command outside a package. Hint: use the root of the repository.");      
+      this.env.error(new Error("Please execute this command outside a package. Hint: use the root of the repository."));
     } 
   }
 
@@ -56,7 +63,7 @@ module.exports = class extends HtmlGenerator {
      if (isCustomized === false) {
         templatesToParse.push({ templateBefore: '__.npmrc', templateAfter: '.npmrc'});
      };
-    this.fs.copy(copyArray, this.destinationPath(`${frameworkFolder}${this.options.frameworkName}`));
+    this.fs.copy(<any>copyArray, this.destinationPath(`${frameworkFolder}${this.options.frameworkName}`));
     templatesToParse.forEach((template) => {
         let templateBefore = typeof template === "string" ? template : template.templateBefore,
         templateAfter = typeof template === "string" ? template : template.templateAfter;
@@ -82,4 +89,4 @@ module.exports = class extends HtmlGenerator {
   install() {
     this.install.call(this, `src/${this.options.frameworkName}`);
   }
-};
+}

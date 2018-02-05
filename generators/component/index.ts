@@ -1,10 +1,17 @@
-'use strict';
-var HtmlGenerator = require('../html.js');
-var path = require('path');
+import * as path from "path";
+import { HtmlGenerator } from "../html";
 
-module.exports = class extends HtmlGenerator {
+export = class extends HtmlGenerator {
+
+  options: {
+    componentName: string
+  }
+  componentClass: string;
+  isRoutable: boolean;
+  
+
   constructor(args, opts) {
-    super(args, opts);    
+    super(args, opts);
     this.argument('componentName', { type: String, required: true });
     this.options.componentName = this.camelCaseValue(this.options.componentName);
   }
@@ -59,19 +66,22 @@ module.exports = class extends HtmlGenerator {
                 // Now let's get this package's metadata file and add the new component's url to the routing table
                 // Metadata is not a cjs module, so we have to read the file and check what's there, considering there can be no PageSwitcherContainer route or even flex routes defined.
                 // This algorithm will make sure all situations are accounted. It will unshift the result instead of pushing as it would way more complicated to know where the array of literal end
-                let metadataFile = this.destinationPath(`${packageFolder}/../${packageName}.metadata.ts`),
-                  fileContent = this.fs.read(metadataFile),   
-                  routeConfigSetting = { regex: /routeConfig[ ]{0,}:[\s\S]*?\[/, unshifter : () => {return `routeConfig: [\n{path: "${answers.url}", loadChildren: ` + "`${packageName}/src/components/" + `${this.options.componentName}/${this.options.componentName}#${this.componentClass}Module` + "`" + `, data: {title: "${this.componentClass}"}},\n`} },     
-                  routesSetting = { regex: /routes[ ]{0,}:[\s\S]*?\[/, unshifter: () => {return `routes: [\n{\n\n${routeConfigSetting.unshifter()}]\n}\n`} },
-                  flexSetting = { regex: /flex[ ]{0,}:[\s\S]*?\{/, unshifter: () => {return `flex: {\n${routesSetting.unshifter()}],\n`} },                                    
-                  matchedSetting = [routeConfigSetting, routesSetting, flexSetting].find((setting) => fileContent.match(setting.regex)),                  
-                  stringToReplace = matchedSetting.unshifter();
+                const metadataFile = this.destinationPath(`${packageFolder}/../${packageName}.metadata.ts`);
+                const fileContent = this.fs.read(metadataFile);   
+                const routeConfigSetting = { regex: /routeConfig[ ]{0,}:[\s\S]*?\[/, unshifter : () => {return `routeConfig: [\n{path: "${answers.url}", loadChildren: ` + "`${packageName}/src/components/" + `${this.options.componentName}/${this.options.componentName}#${this.componentClass}Module` + "`" + `, data: {title: "${this.componentClass}"}},\n`} };
+                const routesSetting = { regex: /routes[ ]{0,}:[\s\S]*?\[/, unshifter: () => {return `routes: [\n{\n\n${routeConfigSetting.unshifter()}]\n}\n`} };
+                const flexSetting = { regex: /flex[ ]{0,}:[\s\S]*?\{/, unshifter: () => {return `flex: {\n${routesSetting.unshifter()}],\n`} };
+                const matchedSetting = [routeConfigSetting, routesSetting, flexSetting].find((setting) => fileContent.match(setting.regex) != null);
                 
-                if (stringToReplace != null) {                          
-                  this.fs.write(metadataFile, fileContent.replace(matchedSetting.regex, stringToReplace));                   
-                } else {
-                  this.log("Couldn't find the routes entry in the metadata file");
-                }                  
+                if (matchedSetting) {
+                  const stringToReplace = matchedSetting.unshifter();
+                  if (stringToReplace != null) {
+                    this.fs.write(metadataFile, fileContent.replace(matchedSetting.regex, stringToReplace));                   
+                  } else {
+                    this.log("Couldn't find the routes entry in the metadata file");
+                  }
+                }
+                  
                 copyAndBuild();
               }
             });
@@ -83,4 +93,4 @@ module.exports = class extends HtmlGenerator {
 
       this.copyAndParse("components", copyAndParse);    
   }
-};
+}

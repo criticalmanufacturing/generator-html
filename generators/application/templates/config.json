@@ -1,0 +1,43 @@
+{
+    "debug": {
+      "isEnabled": false
+    },
+    "host": {
+      "rest": {
+        "enableSsl": false,
+        "address": "",
+        "port": 0,
+        "timeout": 120000
+      },
+      "tenant": {
+        "name": ""
+      },
+      "loadBalancer": {
+        "enableSsl": false,
+        "address": "",
+        "port": 0,
+        "timeout": 120000
+      },
+      "isLoadBalancerEnabled": false,
+      "useExternalAuthentication": false
+    },
+    "packages": {
+      "available": [
+      ],
+      "baseDir": "node_modules/"
+    },
+    "general": {
+      "environmentName": "",
+      "supportedCultures": [],
+      "supportedThemes": [],
+      "defaultDomain": "",
+      "passwordEncryption": "rsa",
+      "startup": {
+        "startupCulture": "",
+        "startupTheme": ""
+      }
+    },
+    "cacheId": "1",
+    "version": "0.0.1"
+  }
+  
