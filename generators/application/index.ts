@@ -69,7 +69,6 @@ export = class extends HtmlGenerator {
       registry: this.ctx.__config.registry
     });
     this.fs.copy(this.templatePath("web.config"), this.destinationPath("web.config"));
-    this.fs.copy(this.templatePath("config.json"), this.destinationPath("config.json"));
     this.fs.copy(this.templatePath("index.html"), this.destinationPath("index.html"));
   }
 
@@ -82,6 +81,8 @@ export = class extends HtmlGenerator {
     // Add here other files that may have settings
     if (this.fs.exists(configPath)) {
       this.fs.copy(configPath, this.destinationPath("config.json"));
+    } else {
+      this.fs.copy(this.templatePath("config.json"), this.destinationPath("config.json"));
     }
   }
 }
