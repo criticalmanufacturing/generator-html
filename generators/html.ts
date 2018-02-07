@@ -29,10 +29,10 @@ export class HtmlGenerator extends Generator {
 	}
 	
 	constructor(args, opts) {
-			super(args, opts);
-			// Disable the conflicts by forcing everything
-			(<any>this).conflicter.force = true;
-			this.ctx = <any>{};
+		super(args, opts);
+		// Disable the conflicts by forcing everything
+		(<any>this).conflicter.force = true;
+		this.ctx = <any>{};
 		// Javascript at its best
 		contextBuilder.call(this, null, this.ctx);
 	}
@@ -87,21 +87,21 @@ export class HtmlGenerator extends Generator {
 	/**
 	 * Copies and parses the templates being copied to a package from the same repository. The user can select which package to copy to.
 	 */
-	copyAndParse(packageInnerFolder, copyAndParseDelegate) {
+	copyAndParse(packageInnerFolder, copyAndParseDelegate: (packageName: string, sourcePackagePath: string, packagePack: string) => void) {
 		if (typeof this.config.get("package") === "string") {
-      		return copyAndParseDelegate(this.config.get("package"), `src/${packageInnerFolder}/`, packageInnerFolder);
+      		return copyAndParseDelegate(this.config.get("package"), `src/${packageInnerFolder}/`, this.destinationPath());
     	} else if (this.config.get("isRoot") === true) {
-				let repositoryPackages = fs.readdirSync(this.destinationPath("src/packages")).filter((pkg) => !(pkg.indexOf(".") === 0));				
-	      return this.prompt([{
-	        type    : 'list',
-	        name    : 'package',
-					choices : repositoryPackages,
-	        message : `Please select which package does this ${packageInnerFolder} belong to.`
-	      }]).then((answers) => {
-	        if (typeof answers.package === "string" && answers.package !== "") {
-						return copyAndParseDelegate(answers.package, `src/packages/${answers.package}/src/${packageInnerFolder}/`, `src/packages/${answers.package}`);
-	        }
-	      });
+			let repositoryPackages = fs.readdirSync(this.destinationPath("src/packages")).filter((pkg) => !(pkg.indexOf(".") === 0));
+			return this.prompt([{
+				type    : 'list',
+				name    : 'package',
+				choices : repositoryPackages,
+				message : `Please select which package does this ${packageInnerFolder} belong to.`
+			}]).then((answers) => {
+				if (typeof answers.package === "string" && answers.package !== "") {
+					return copyAndParseDelegate(answers.package, `src/packages/${answers.package}/src/${packageInnerFolder}/`, `src/packages/${answers.package}`);
+				}
+			});
 	    } else {
 	      this.log("Couldn't resolve target package.");
 	    }	    
@@ -119,7 +119,7 @@ export class HtmlGenerator extends Generator {
       			return { templateBefore: `i18n/${type}.${extension}`, templateAfter: `${packageFolder}${name}/i18n/${name}.${extension}`};})];            
       	templatesToParse.forEach((template) => {
         	this.fs.copyTpl(this.templatePath(template.templateBefore), this.destinationPath(`${template.templateAfter}`), templateObject)              
-      	}); 
+      	});
 	}
 
 	/**
@@ -138,4 +138,41 @@ export class HtmlGenerator extends Generator {
 		}
 		return false;
 	}
-};
+
+	/**
+	 * Adds the given dependencies to the package.json.
+	 * If indicated, it also adds the links.
+	 * @param packagePath Package path
+	 * @param dependencies Dependencies list
+	 * @param shouldLink Should also add dependency to cmfLinkDependencies
+	 */
+	addPackageDependencies(packagePath: string, dependencies: string[], shouldLink?: boolean): void {
+		const packageJSONPath = this.destinationPath(packagePath, "package.json");
+		const packageJSONObject = this.fs.readJSON(packageJSONPath);
+
+		// Create dependencies container if not exist
+		if (packageJSONObject.optionalDependencies == null) {
+			packageJSONObject.optionalDependencies = {};
+		}
+
+		if (shouldLink && packageJSONObject.cmfLinkDependencies == null) {
+			packageJSONObject.cmfLinkDependencies = {};
+		}
+
+		// Insert the dependencies using channel
+		dependencies
+			.filter(dependency => dependency !== packageJSONObject.name) // remove links to itself
+			.forEach(dependency => {
+			if (!(dependency in packageJSONObject.optionalDependencies)) {
+				packageJSONObject.optionalDependencies[dependency] = this.ctx.__config.channel || "*";
+			}
+
+			if (shouldLink && !(dependency in packageJSONObject.cmfLinkDependencies)) {
+				packageJSONObject.cmfLinkDependencies[dependency] = dependency.startsWith(this.ctx.packagePrefix) ?
+						`file:../${dependency}` : `file:../../apps/${this.ctx.packagePrefix}.web/node_modules/${dependency}`;
+			}
+		})
+        
+        this.fs.writeJSON(packageJSONPath, packageJSONObject); 
+	}
+}

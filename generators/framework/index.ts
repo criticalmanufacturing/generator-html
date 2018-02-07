@@ -76,13 +76,8 @@ export = class extends HtmlGenerator {
       });   
 
      // For package.json we just add cmf.core or cmf.mes
-     let packageJSONPath = `${frameworkFolder}${this.options.frameworkName}/package.json`,
-        packageJSONObject = this.fs.readJSON(this.destinationPath(packageJSONPath));
-        packageJSONObject.cmfLinkDependencies[this.superFramework.name] = `file:../../apps/${this.ctx.packagePrefix}.web/node_modules/${this.superFramework.name}`;
-        packageJSONObject.cmfLinkDependencies["cmf.taura"] = `file:../../apps/${this.ctx.packagePrefix}.web/node_modules/cmf.taura`;
-        packageJSONObject.optionalDependencies[this.superFramework.name] = this.ctx.__config.channel;
-        packageJSONObject.optionalDependencies["cmf.taura"] = this.ctx.__config.channel;
-        this.fs.writeJSON(packageJSONPath, packageJSONObject); 
+      const dependencies = ["cmf.taura", this.superFramework.name];
+      this.addPackageDependencies(`${frameworkFolder}${this.options.frameworkName}`, dependencies, true);
 
       this.updateWebAppPackageJSON(`file:../../src/${this.options.frameworkName}`); 
       

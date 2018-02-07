@@ -11,6 +11,8 @@ export = class extends HtmlGenerator {
   constructor(args, opts) {
     super(args, opts);
 
+    this.option("keep", {type: Boolean, default: false});
+
     this.log("***************Welcome to the HTML scaffolding tool***************\n\n");
   }
 
@@ -53,11 +55,11 @@ export = class extends HtmlGenerator {
     const filePath = ".dev-tasks.json";
     let fileContent = this.fs.readJSON(this.destinationPath(filePath), {});
     fileContent.packagePrefix = this.packagePrefix;
-    fileContent.framework = "";
+    fileContent.framework = this.options.keep ? fileContent.framework || "" : "";
     fileContent.webAppPrefix = this.packagePrefix;
-    fileContent.isWebAppCompilable = false;
-    fileContent.dependencies = [];
-    fileContent.packages = [];
+    fileContent.isWebAppCompilable = this.options.keep ? fileContent.isWebAppCompilable || false : false;
+    fileContent.dependencies = this.options.keep ? fileContent.dependencies || [] : [];
+    fileContent.packages = this.options.keep ? fileContent.packages || [] : [];
     fileContent.registry = this.registry || this.ctx.__config.registry;
     fileContent.channel = this.channel || this.ctx.__config.channel;
     this.fs.writeJSON(filePath, fileContent);

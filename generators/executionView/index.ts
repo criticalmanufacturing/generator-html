@@ -19,7 +19,11 @@ export = class extends HtmlGenerator {
           isExtendingMes : this.isExtendingMes(packageFolder)
         };        
         this.copyTpl(sourcePackageFolder, "executionView", executionViewCamel, {executionView}, null, null, true);             
-      } 
-      this.copyAndParse("components", copyAndParse);    
+
+        const dependencies = ["cmf.core.business.controls"];
+        dependencies.push(executionView.isExtendingMes ? "cmf.mes" : "cmf.core");
+        this.addPackageDependencies(packageFolder, dependencies, true);
+      }
+      return this.copyAndParse("components", copyAndParse);    
   }
 }

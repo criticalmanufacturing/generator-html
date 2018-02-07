@@ -51,6 +51,9 @@ export = class extends HtmlGenerator {
 
           let copyAndBuild = () => {
             this.copyTpl(sourcePackageFolder, "component", this.options.componentName, {component}, null, null, true);
+
+            const dependencies = [component.isExtendingMes ? "cmf.mes" : "cmf.core"];
+            this.addPackageDependencies(packageFolder, dependencies, true);
           }
 
           if (this.isRoutable === true) {

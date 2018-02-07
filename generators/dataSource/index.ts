@@ -16,16 +16,19 @@ export = class extends HtmlGenerator {
    * Copies the dataSource templates and changes the Dashboard's path according to the repository in question. (If cmf.core, it's relative, if not, it's absolute)
    */
   copyTemplates() {
-    var copyAndParse = (packageName, packageFolder) => {
+    var copyAndParse = (packageName, sourcePackageFolder, packageFolder) => {
 
-      this.copyTpl(packageFolder, "dataSource", this.options.dataSourceName, {dataSource : 
+      this.copyTpl(sourcePackageFolder, "dataSource", this.options.dataSourceName, {dataSource : 
         { name: this.options.dataSourceName,
           class : `${this.options.dataSourceName.charAt(0).toUpperCase()}${this.options.dataSourceName.slice(1)}`,                  
           isADashboardDataSource : packageName.startsWith("cmf.core.dashboards")
         }
       }, [".ts"], null, true);      
-    } 
 
-    this.copyAndParse("dataSources", copyAndParse);    
+      const dependencies = ["cmf.core.dashboards", "cmf.core"];
+      this.addPackageDependencies(packageFolder, dependencies, true);
+    }
+
+    return this.copyAndParse("dataSources", copyAndParse);    
   }
 }

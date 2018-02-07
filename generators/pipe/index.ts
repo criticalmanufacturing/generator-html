@@ -16,11 +16,13 @@ export = class extends HtmlGenerator {
    * Copies the pipe template to the proper folder
    */
   copyTemplates() {
-    var copyAndParse = (packageName, packageFolder) => {
+    var copyAndParse = (packageName, sourcePackageFolder, packageFolder) => {
       
-      this.copyTpl(packageFolder, "pipe", this.options.pipeName, {pipe : {class : `${this.options.pipeName.charAt(0).toUpperCase()}${this.options.pipeName.slice(1)}`}}, [".ts"], null, false);
+      this.copyTpl(sourcePackageFolder, "pipe", this.options.pipeName, {pipe : {class : `${this.options.pipeName.charAt(0).toUpperCase()}${this.options.pipeName.slice(1)}`}}, [".ts"], null, false);
+
+      this.addPackageDependencies(packageFolder, ["cmf.core"], true);
     }
 
-    this.copyAndParse("pipes", copyAndParse);    
+    return this.copyAndParse("pipes", copyAndParse);    
   }
 }

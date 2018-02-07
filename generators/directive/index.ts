@@ -16,9 +16,9 @@ export = class extends HtmlGenerator {
    * Copies the directive template and changes the type of component it inherits from, CoreComponent if coming from the COREHTML repository, MesComponent otherwise.
    */
   copyTemplates() {
-    var copyAndParse = (packageName, packageFolder) => {
+    var copyAndParse = (packageName, sourcePackageFolder, packageFolder) => {
       
-      this.copyTpl(packageFolder, "directive", this.options.directiveName, {directive : 
+      this.copyTpl(sourcePackageFolder, "directive", this.options.directiveName, {directive : 
         {
           name: this.options.directiveName,
           class : `${this.options.directiveName.charAt(0).toUpperCase()}${this.options.directiveName.slice(1)}`,
@@ -27,8 +27,11 @@ export = class extends HtmlGenerator {
         }
       }, 
       [".ts"], null, false);
+
+      const dependencies = ["cmf.core"];
+      this.addPackageDependencies(packageFolder, dependencies, true);
     }        
 
-    this.copyAndParse("directives", copyAndParse);    
+    return this.copyAndParse("directives", copyAndParse);    
   }
 }

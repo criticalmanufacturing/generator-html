@@ -29,10 +29,14 @@ export = class extends HtmlGenerator {
         isADashboardWidget : packageName.startsWith("cmf.core.dashboards")
       };
 
-      this.copyTpl.call(this, sourcePackageFolder, "widget", this.options.widgetName, {widget}, null, ["Settings.ts", "Settings.html", "Settings.less"], true);  
+      this.copyTpl(sourcePackageFolder, "widget", this.options.widgetName, {widget}, null, ["Settings.ts", "Settings.html", "Settings.less"], true);  
+
+      const dependencies = ["cmf.core.dashboards"];
+      dependencies.push(widget.isExtendingMes ? "cmf.mes" : "cmf.core");
+      this.addPackageDependencies(packageFolder, dependencies, true);
     } 
 
-    this.copyAndParse.call(this, "widgets", copyAndParse);    
+    return this.copyAndParse("widgets", copyAndParse);    
   }
 
   install() {
