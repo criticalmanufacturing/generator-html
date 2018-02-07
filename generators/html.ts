@@ -25,7 +25,9 @@ export class HtmlGenerator extends Generator {
 		const appPath = path.join(this.ctx.__repositoryRoot, "apps");
 		// Read the folders in it
 		const directories = fs.readdirSync(appPath);
-		return directories.map(dir => path.join(this.ctx.__repositoryRoot, "apps", dir));
+		return directories
+			.map(dir => path.join(this.ctx.__repositoryRoot, "apps", dir))
+			.filter(dir => fs.statSync(dir).isDirectory);
 	}
 	
 	constructor(args, opts) {
