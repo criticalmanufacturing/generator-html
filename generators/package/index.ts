@@ -1,7 +1,6 @@
 import { HtmlGenerator } from "../html";
 import * as fs from "fs";
 import * as path from "path";
-var context = require('../context.json');
 
 module.exports = class extends HtmlGenerator {
 
@@ -16,6 +15,10 @@ module.exports = class extends HtmlGenerator {
 
     this.argument('packageName', { type: String, required: true });
     this.options.packageName = this.camelCaseValue(this.options.packageName);
+    // Prepend the package suffix if not present
+    if (!this.options.packageName.startsWith(this.ctx.packagePrefix)) {
+      this.options.packageName = `${this.ctx.packagePrefix}.${this.options.packageName}`;
+    }
 
     // If this command was not executed from the root, exit    
     if (this.config.get("isRoot") !== true) {
@@ -44,20 +47,34 @@ module.exports = class extends HtmlGenerator {
 
     // Let's get the list of packages from the current repository and merge them with the list of packages in the webApp
     // We will also exclude some that are always included and therefore, not really relevant to mention
-    let webPrefix = this.options.packageName.startsWith("cmf.core") ? "cmf.core" : (this.options.packageName.startsWith("cmf.mes")) ? "cmf.mes" : this.ctx.packagePrefix,      
-    excludeFilter = (folder) => { return folder.startsWith("cmf") && ["cmf.taura", "cmf.core", "cmf.core.multicast.client", "cmf.mes", "cmf.lbos", "cmf.polyfill", "cmf.angular"].indexOf(folder) < 0 && !folder.startsWith("cmf.style") },
-      repositoryPackages = new Set(fs.readdirSync(this.destinationPath("src/packages"))),
-      webAppPackages = new Set(fs.readdirSync(this.destinationPath(`apps/${webPrefix}.web/node_modules`)).filter(excludeFilter)),
-      allPackages = (<any>repositoryPackages).union(webAppPackages);
-    
+    let webAppFolder = this.webAppFoldersPath.find(folder => folder.endsWith(".web"));
+    if (!webAppFolder) {
+      webAppFolder = this.webAppFoldersPath[0];
+    };
 
+    let allPackages = [];
+    let repositoryPackages = new Set();
+    let webAppPackages = new Set();
+
+    if (fs.existsSync(this.destinationPath("src", "packages"))) {
+      repositoryPackages = new Set(fs.readdirSync(this.destinationPath("src", "packages")));
+    }
+    
+    if (fs.existsSync(this.destinationPath(webAppFolder, "node_modules"))) {
+      const excludeFilter = (folder) => { return folder.startsWith("cmf") && ["cmf.taura", "cmf.core", "cmf.core.multicast.client", "cmf.mes", "cmf.lbos", "cmf.polyfill", "cmf.angular"].indexOf(folder) < 0 && !folder.startsWith("cmf.style") };
+      webAppPackages = new Set(fs.readdirSync(this.destinationPath(webAppFolder, "node_modules")).filter(excludeFilter));
+    }
+    
+    allPackages = (<any>repositoryPackages).union(webAppPackages);
+    
     return this.prompt([{
       type    : 'checkbox',
       name    : 'dependencies',      
       message : `Select dependencies`,
       choices: Array.from(allPackages).filter((pkg) => !(<string>pkg).startsWith(".")).sort().map((pkg) => {return pkg}),
       pageSize: 20, // We can set up the pageSize attribute but there’s a PR opened ATM to make the height match the terminal height. Soon this won’t be necessary
-      default : null
+      default : null,
+      when    : () => Array.from(allPackages).length > 0
     }]).then((answers) => {
       if (answers.dependencies instanceof Array && answers.dependencies.length > 0) {        
         this.dependencies = answers.dependencies.filter((entry) => entry !== "");
@@ -71,47 +88,60 @@ module.exports = class extends HtmlGenerator {
   * - Will update the package.json with all the dependencies defined for the package
   * - Will update the package.json of the web app so it is aware of this new package
   * - Will update the config.json of the web app, so it loads the new package once it starts
-  * - Will udpate the root's .dev.tasks.json so when a "gulp install" or "gulp build" is issued at root level, it will also account for the new package.
+  * - Will update the root's .dev.tasks.json so when a "gulp install" or "gulp build" is issued at root level, it will also account for the new package.
   */
   copyTemplates() {        
-    let packageConfig = { name : this.options.packageName}, templatesToParse = ['package.json', 'gulpfile.js', '.yo-rc.json', 
-     { templateBefore: 'src/metadata.ts', templateAfter: `src/${packageConfig.name}.metadata.ts`}, { templateBefore: '__.npmignore', templateAfter: '.npmignore'} ], 
-     packagesFolder = 'src/packages/', 
-     repository = this.destinationRoot().split("\\").pop(), isCustomized = repository !== "CoreHTML" && repository !== "MESHTML",
-     copyArray = [this.templatePath('**'), `!${this.templatePath('src/metadata.ts')}`, `!${this.templatePath('__.npmignore')}`, `!${this.templatePath('__.npmrc')}`];
-     if (isCustomized === false) {
-        templatesToParse.push({ templateBefore: '__.npmrc', templateAfter: '.npmrc'});
-     }
-    this.fs.copy(<any>copyArray, this.destinationPath(`${packagesFolder}${this.options.packageName}`));
+    const packageConfig = {name: this.options.packageName};
+    const templatesToParse = [
+      'package.json',
+      'gulpfile.js',
+      '.yo-rc.json', 
+      {templateBefore: 'src/metadata.ts', templateAfter: `src/${packageConfig.name}.metadata.ts`},
+      {templateBefore: '__.npmignore', templateAfter: '.npmignore'}
+    ];
+    const packagesFolder = 'src/packages/';
+    const repository = this.destinationRoot().split("\\").pop();
+    const copyArray = [
+      this.templatePath('**'),
+      `!${this.templatePath('src/metadata.ts')}`,
+      `!${this.templatePath('__.npmignore')}`,
+      `!${this.templatePath('__.npmrc')}`
+    ];
+
+    if (this.ctx.__config.registry) {
+      templatesToParse.push({ templateBefore: '__.npmrc', templateAfter: '.npmrc'});
+    }
+
+    this.fs.copy(<any>copyArray, this.destinationPath(packagesFolder, this.options.packageName));
     templatesToParse.forEach((template) => {
         let templateBefore = typeof template === "string" ? template : template.templateBefore,
         templateAfter = typeof template === "string" ? template : template.templateAfter;
-        this.fs.copyTpl(this.templatePath(templateBefore), this.destinationPath(`${packagesFolder}${this.options.packageName}/${templateAfter}`), {package: packageConfig})
+        this.fs.copyTpl(this.templatePath(templateBefore), this.destinationPath(`${packagesFolder}${this.options.packageName}/${templateAfter}`), {package: packageConfig, registry: this.ctx.__config.registry})
       });
 
-    // Let's update the destination package.json with the lbos and any dependencies that may have been defined          
-    let packageJSONPath = `${packagesFolder}${this.options.packageName}/package.json`,
-    packageJSONObject = this.fs.readJSON(this.destinationPath(packageJSONPath)),
-    appLibsFolder = `file:../../../apps/${this.ctx.packagePrefix}.web/node_modules/`;    
+    // Let's update the destination package.json with the lbos and any dependencies that may have been defined
+    const packageJSONPath = `${packagesFolder}${this.options.packageName}/package.json`;
+    const packageJSONObject = this.fs.readJSON(this.destinationPath(packageJSONPath));
+    const appLibsFolder = `file:../../../apps/${this.ctx.packagePrefix}.web/node_modules/`;    
         
     if (this.dependencies instanceof Array && this.dependencies.length > 0) {          
       this.dependencies.forEach((dependency) => {
         let link: string;
         if (dependency.startsWith("cmf.core") && repository === "MESHTML") {
-          link = `file:../../../../COREHTML/${packagesFolder}${dependency}`;
+          link = `file:../../../../CoreHTML/${packagesFolder}${dependency}`;
         } else if ((dependency.startsWith(this.ctx.packagePrefix))) {    
           link = `file:../${dependency}`;          
         } else {
           link = `${appLibsFolder}${dependency}`;  
         }
         packageJSONObject.cmfLinkDependencies[dependency] = link;
-        packageJSONObject.optionalDependencies[dependency] = context.npmTag;
+        packageJSONObject.optionalDependencies[dependency] = this.ctx.__config.channel;
       });
     } 
     // We need one fallback at the end. If we are customizing, we can end up using ony packages from CORE and we need to customize on top of MES
     if (repository !== "CoreHTML" && repository !== "MESHTML" && Object.keys(packageJSONObject.optionalDependencies).some(function(dependency) {return dependency.startsWith("cmf.mes")})) {
       packageJSONObject.cmfLinkDependencies["cmf.mes"] = `${appLibsFolder}cmf.mes`;
-      packageJSONObject.optionalDependencies["cmf.mes"] = context.npmTag;
+      packageJSONObject.optionalDependencies["cmf.mes"] = this.ctx.__config.channel;
     }
 
     this.fs.writeJSON(packageJSONPath, packageJSONObject);     
@@ -147,6 +177,8 @@ module.exports = class extends HtmlGenerator {
   * Will install both the new package as well as the web app
   */
   install() {
-    this["__proto__"]["__proto__"].install.call(this, `src/packages/${this.options.packageName}`);  
+    super.install(`src/packages/${this.options.packageName}`);  
+    this.destinationRoot(`src/packages/${this.options.packageName}`);
+    this.spawnCommandSync("gulp", ["build"]);
   }
 }

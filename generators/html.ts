@@ -2,18 +2,19 @@ import * as Generator from 'yeoman-generator';
 import * as fs from "fs";
 import * as path from "path";
 var contextBuilder = require('@criticalmanufacturing/dev-tasks/main.js');
-var context = require('./context.json');
 
 export class HtmlGenerator extends Generator {
 	
 	ctx: {
-		prefix: string,
 		libsFolder: string,
 		packagePrefix: string,
 		isCustomized: boolean,
 		metadataFileName: string,
 		metadata: any,
-		__config: any,
+		__config:  {
+			channel: string,
+			registry: string	
+		},
 		__repositoryRoot: string,
 		__projectName: string
 	};
@@ -21,18 +22,20 @@ export class HtmlGenerator extends Generator {
 	options: any;
 
 	get webAppFoldersPath(): string[] {
-		const appPath = path.join(this.ctx.__repositoryRoot, "app");
+		const appPath = path.join(this.ctx.__repositoryRoot, "apps");
 		// Read the folders in it
 		const directories = fs.readdirSync(appPath);
-		return directories;
+		return directories.map(dir => path.join(this.ctx.__repositoryRoot, "apps", dir));
 	}
 	
-  constructor(args, opts) {
-    super(args, opts);
-		this.ctx = <any>{};
-    // Javascript at its best
-    contextBuilder.call(this, null, this.ctx);
-  }
+	constructor(args, opts) {
+			super(args, opts);
+			// Disable the conflicts by forcing everything
+			(<any>this).conflicter.force = true;
+			this.ctx = <any>{};
+		// Javascript at its best
+		contextBuilder.call(this, null, this.ctx);
+	}
 
 	/**
 	 * Simply camel cases the passed in value. All parameters should follow this rule.
@@ -44,15 +47,14 @@ export class HtmlGenerator extends Generator {
 	/**
 	 * Updates the web app's package.json
 	 */
-  updateWebAppPackageJSON(packagePath) {
+  	updateWebAppPackageJSON(packagePath) {
 		this.webAppFoldersPath.forEach((webAppFolderPath) => {
-			const webAppPackageJSONPath = path.join(webAppFolderPath, "package.json");
-			const webAppPackageJSONObject = this.fs.readJSON(this.destinationPath(webAppPackageJSONPath));
+			const webAppPackageJSONObject = this.fs.readJSON(this.destinationPath(webAppFolderPath, "package.json"));
 		
 			if (!(this.options.packageName in webAppPackageJSONObject.optionalDependencies)) {
 				webAppPackageJSONObject.cmfLinkDependencies[this.options.packageName] = packagePath;
-				webAppPackageJSONObject.optionalDependencies[this.options.packageName] = context.npmTag;
-				this.fs.writeJSON(webAppPackageJSONPath, webAppPackageJSONObject); 	
+				webAppPackageJSONObject.optionalDependencies[this.options.packageName] = this.ctx.__config.channel;
+				this.fs.writeJSON(this.destinationPath(webAppFolderPath, "package.json"), webAppPackageJSONObject); 	
 			}
 		})
 	}
@@ -70,14 +72,12 @@ export class HtmlGenerator extends Generator {
 
 		// Install in the package
 		this.destinationRoot(packagePath);
-		let ls = this.spawnCommand('gulp', ['install']);
+		let ls = this.spawnCommandSync('gulp', ['install']);
 
-		ls.on('close', (code) => {
-			// Install in all apps
-			this.webAppFoldersPath.forEach((appFolderPath) => {
-				this.destinationRoot(appFolderPath);
-				this.spawnCommand('gulp', ['install']);
-			});
+		// Install in all apps
+		this.webAppFoldersPath.forEach((appFolderPath) => {
+			this.destinationRoot(appFolderPath);
+			this.spawnCommandSync('gulp', ['install']);
 		});
 
 		// Restore
@@ -89,17 +89,17 @@ export class HtmlGenerator extends Generator {
 	 */
 	copyAndParse(packageInnerFolder, copyAndParseDelegate) {
 		if (typeof this.config.get("package") === "string") {
-      		copyAndParseDelegate(this.config.get("package"), `src/${packageInnerFolder}/`);
+      		return copyAndParseDelegate(this.config.get("package"), `src/${packageInnerFolder}/`, packageInnerFolder);
     	} else if (this.config.get("isRoot") === true) {
 				let repositoryPackages = fs.readdirSync(this.destinationPath("src/packages")).filter((pkg) => !(pkg.indexOf(".") === 0));				
-	      this.prompt([{
+	      return this.prompt([{
 	        type    : 'list',
 	        name    : 'package',
 					choices : repositoryPackages,
 	        message : `Please select which package does this ${packageInnerFolder} belong to.`
 	      }]).then((answers) => {
 	        if (typeof answers.package === "string" && answers.package !== "") {
-				copyAndParseDelegate(answers.package, `src/packages/${answers.package}/src/${packageInnerFolder}/`);
+						return copyAndParseDelegate(answers.package, `src/packages/${answers.package}/src/${packageInnerFolder}/`, `src/packages/${answers.package}`);
 	        }
 	      });
 	    } else {
@@ -120,5 +120,22 @@ export class HtmlGenerator extends Generator {
       	templatesToParse.forEach((template) => {
         	this.fs.copyTpl(this.templatePath(template.templateBefore), this.destinationPath(`${template.templateAfter}`), templateObject)              
       	}); 
+	}
+
+	/**
+	 * Checks if a package is using core or mes
+	 * @param packagePath Package path
+	 */
+	isExtendingMes(packagePath: string): boolean {
+		// Read the package.json file
+		const packageConfig = require(path.resolve(packagePath,"package.json"));
+		
+		if (packageConfig) {
+			return [
+				...Object.keys(packageConfig.dependencies || {}),
+				...Object.keys(packageConfig.optionalDependencies || {})
+			].some((dependency: string) => dependency.startsWith("cmf.mes"));
+		}
+		return false;
 	}
 };

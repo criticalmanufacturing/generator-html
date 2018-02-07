@@ -13,8 +13,7 @@ export = class extends HtmlGenerator {
   }
   
   copyTemplates() {
-    var copyAndParse = (packageName, packageFolder) => {
- 
+    var copyAndParse = (packageName, sourcePackageFolder, packageFolder) => {        
         let wizardClass = `Wizard${this.options.wizardName.charAt(0).toUpperCase()}${this.options.wizardName.slice(1)}`,
         wizardCamel = `${wizardClass.charAt(0).toLowerCase()}${wizardClass.slice(1)}`,
         wizard = {
@@ -22,9 +21,9 @@ export = class extends HtmlGenerator {
           class : wizardClass,
           selector: `${packageName.split(".").join("-")}-${wizardCamel}`,
           package: packageName,          
-          isExtendingMes : (packageName.startsWith("cmf.core")) ? false : true
+          isExtendingMes : this.isExtendingMes(packageFolder)
         };        
-        this.copyTpl(packageFolder, "wizard", wizardCamel, {wizard}, null, null, true);             
+        this.copyTpl(sourcePackageFolder, "wizard", wizardCamel, {wizard}, null, null, true);             
       } 
       this.copyAndParse("components", copyAndParse);    
   }

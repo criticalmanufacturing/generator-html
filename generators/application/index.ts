@@ -16,7 +16,7 @@ export = class extends HtmlGenerator {
    */
   initializing() {
     if (!this.ctx.packagePrefix || !this.ctx.__config || !this.ctx.__config.registry || !this.ctx.__config.channel) {
-      throw new Error("Unable to continue, run @criticalmanufacturing/html first");
+      throw new Error("Unable to continue, run yo @criticalmanufacturing/html first");
     }
   }
 
@@ -28,8 +28,8 @@ export = class extends HtmlGenerator {
       {
         type    : "input",
         name    : "appName",
-        message : `What is the application name?`,
-        default : `${this.ctx.packagePrefix}.web`
+        message : `What is the application name? ${this.ctx.packagePrefix}.`,
+        default : `web`
       },
       {
         type    : "list",
@@ -47,7 +47,7 @@ export = class extends HtmlGenerator {
       }
     ]).then((answers) => {
       console.log(answers);
-      this.appName = answers.appName;
+      this.appName = `${this.ctx.packagePrefix}.${answers.appName}`;
       this.basePackage = answers.otherPackage ? answers.otherPackage : answers.basePackage;
  	 });
   }
@@ -84,5 +84,7 @@ export = class extends HtmlGenerator {
     } else {
       this.fs.copy(this.templatePath("config.json"), this.destinationPath("config.json"));
     }
+
+    this.log(`Please configure the file ${this.destinationPath("config.json")}`);
   }
 }

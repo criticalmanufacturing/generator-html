@@ -8,8 +8,7 @@ export = class extends HtmlGenerator {
   }
   
   copyTemplates() {
-    var copyAndParse = (packageName, packageFolder) => {
- 
+    var copyAndParse = (packageName, sourcePackageFolder, packageFolder) => {
         let executionViewClass = `ExecutionView${this.options.executionViewName.charAt(0).toUpperCase()}${this.options.executionViewName.slice(1)}`,
         executionViewCamel = `${executionViewClass.charAt(0).toLowerCase()}${executionViewClass.slice(1)}`,
         executionView = {
@@ -17,9 +16,9 @@ export = class extends HtmlGenerator {
           class : executionViewClass,
           selector: `${packageName.split(".").join("-")}-${executionViewCamel}`,
           package: packageName,          
-          isExtendingMes : (packageName.startsWith("cmf.core")) ? false : true
+          isExtendingMes : this.isExtendingMes(packageFolder)
         };        
-        this.copyTpl(packageFolder, "executionView", executionViewCamel, {executionView}, null, null, true);             
+        this.copyTpl(sourcePackageFolder, "executionView", executionViewCamel, {executionView}, null, null, true);             
       } 
       this.copyAndParse("components", copyAndParse);    
   }

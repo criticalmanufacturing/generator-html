@@ -1,4 +1,3 @@
-import * as path from "path";
 import { HtmlGenerator } from "../html";
 
 export = class extends HtmlGenerator {
@@ -8,6 +7,7 @@ export = class extends HtmlGenerator {
   }
   componentClass: string;
   isRoutable: boolean;
+  packageFolder: string;
   
 
   constructor(args, opts) {
@@ -28,16 +28,15 @@ export = class extends HtmlGenerator {
    * Last step will be building the package.
    */
   copyTemplates() {
-    var copyAndParse = (packageName, packageFolder) => {
+    var copyAndParse = (packageName, sourcePackageFolder, packageFolder) => {
+
+      this.packageFolder = packageFolder;
 
       return this.prompt([{
         type    : 'confirm',
         name    : 'isRoutable',
         message : `Will this component be accessible via url?`
         }]).then((answers) => {
-
-          const packageConfig = require(path.resolve(path.join(packageFolder, "../../package.json")));
-
           let componentClass = `${this.options.componentName.charAt(0).toUpperCase()}${this.options.componentName.slice(1)}`,
           component = {
             name: this.options.componentName,
@@ -45,19 +44,17 @@ export = class extends HtmlGenerator {
             selector: `${packageName.split(".").join("-")}-${this.options.componentName}`,
             package: packageName,
             isRoutable: answers.isRoutable,
-            isExtendingMes: (packageConfig.dependencies && "cmf.mes" in packageConfig.dependencies) || (packageConfig.optionalDependencies && "cmf.mes" in packageConfig.optionalDependencies)
+            isExtendingMes: this.isExtendingMes(packageFolder)
           };
           this.componentClass = componentClass;
           this.isRoutable = component.isRoutable;
 
           let copyAndBuild = () => {
-            this.copyTpl(packageFolder, "component", this.options.componentName, {component}, null, null, true);   
-            this.destinationRoot(packageFolder);
-            this.spawnCommand('gulp', ['build']); 
+            this.copyTpl(sourcePackageFolder, "component", this.options.componentName, {component}, null, null, true);
           }
 
           if (this.isRoutable === true) {
-            this.prompt([{
+            return this.prompt([{
               type    : 'input',
               name    : 'url',
               message : `What will be the url (pascal case)?`
@@ -66,7 +63,7 @@ export = class extends HtmlGenerator {
                 // Now let's get this package's metadata file and add the new component's url to the routing table
                 // Metadata is not a cjs module, so we have to read the file and check what's there, considering there can be no PageSwitcherContainer route or even flex routes defined.
                 // This algorithm will make sure all situations are accounted. It will unshift the result instead of pushing as it would way more complicated to know where the array of literal end
-                const metadataFile = this.destinationPath(`${packageFolder}/../${packageName}.metadata.ts`);
+                const metadataFile = this.destinationPath(`${sourcePackageFolder}/../${packageName}.metadata.ts`);
                 const fileContent = this.fs.read(metadataFile);   
                 const routeConfigSetting = { regex: /routeConfig[ ]{0,}:[\s\S]*?\[/, unshifter : () => {return `routeConfig: [\n{path: "${answers.url}", loadChildren: ` + "`${packageName}/src/components/" + `${this.options.componentName}/${this.options.componentName}#${this.componentClass}Module` + "`" + `, data: {title: "${this.componentClass}"}},\n`} };
                 const routesSetting = { regex: /routes[ ]{0,}:[\s\S]*?\[/, unshifter: () => {return `routes: [\n{\n\n${routeConfigSetting.unshifter()}]\n}\n`} };
@@ -91,6 +88,11 @@ export = class extends HtmlGenerator {
         });   
       } 
 
-      this.copyAndParse("components", copyAndParse);    
+      return this.copyAndParse("components", copyAndParse);    
+  }
+
+  install() {
+    this.destinationRoot(this.packageFolder);
+    this.spawnCommandSync('gulp', ['build']); 
   }
 }

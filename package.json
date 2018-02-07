@@ -4,7 +4,6 @@
   "description": "CMF HTML GUI Scaffolding",
   "files": [
     "generators/*.js",
-    "generators/*.json",
     "generators/*/*.js",
     "generators/*/templates/"
   ],

@@ -6,8 +6,5 @@
   "types": "index.d.ts",  
   "dependencies": {},
   "optionalDependencies": {},
-  "cmfLinkDependencies" : {},
-  "scripts": {
-    "prepublishOnly": "gulp build --production --dist"
-  }
+  "cmfLinkDependencies" : {}
 }

@@ -99,7 +99,7 @@ const outputs: Map<string, Widget.WidgetOutput> = new Map<string, Widget.WidgetO
         "i18n": i18n
     }
 })
-export class <%= widget.class %> extends<% if (widget.isExtendingMes) { %> MesComponent <% } %><% if (!widget.isExtendingMes) { %> CoreComponent <% } %>implements ng.OnChanges, Widget.WidgetRepresentation {
+export class <%= widget.class %> extends Widget.WidgetGeneric implements ng.OnChanges, Widget.WidgetRepresentation {
 
     //#region Private properties
 

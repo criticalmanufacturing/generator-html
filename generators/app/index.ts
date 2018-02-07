@@ -61,5 +61,9 @@ export = class extends HtmlGenerator {
     fileContent.registry = this.registry || this.ctx.__config.registry;
     fileContent.channel = this.channel || this.ctx.__config.channel;
     this.fs.writeJSON(filePath, fileContent);
+
+    // Save this level as the root
+    this.config.set("isRoot", true);
+    this.config.save();
   }
 }

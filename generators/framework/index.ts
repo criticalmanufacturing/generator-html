@@ -10,9 +10,15 @@ export = class extends HtmlGenerator {
   subFramework: any;
 
   constructor(args, opts) {
-    super(args, opts);    
-    this.argument('frameworkName', { type: String, required: true });
-    this.options.frameworkName = this.camelCaseValue(this.options.frameworkName);
+    super(args, opts);
+
+    this.argument('frameworkName', { type: String, required: true }); // Register for legacy mode only
+
+    if (this.options.frameworkName) {
+      this.log(`Ignoring given framework name ${this.options.frameworkName}. Using ${this.ctx.packagePrefix}`);
+    }
+    // Use the package prefix
+    this.options.frameworkName = this.ctx.packagePrefix;
 
     // If this command was not executed from the root, exit    
     if (this.config.get("isRoot") !== true) {
@@ -27,7 +33,7 @@ export = class extends HtmlGenerator {
     return this.prompt([{
       type    : 'list',
       name    : 'superFramework',
-      message : `Which framework are you extending.`,
+      message : `Which framework are you extending?`,
       choices : ["cmf.core", "cmf.mes"],
       default : "cmf.mes" 
     }]).then((answers) => {
@@ -58,26 +64,32 @@ export = class extends HtmlGenerator {
     { templateBefore: 'src/framework.less', templateAfter: `src/${this.subFramework.mainModule}.less`} ,
     { templateBefore: 'src/domain/config/framework.config.ts', templateAfter: `src/domain/config/${this.subFramework.mainModule}.config.ts`} ,    'src/domain/component.ts' , 'src/domain/framework.ts', 'src/domain/object.ts', 'src/domain/sandbox.ts',
     { templateBefore: '__.npmignore', templateAfter: '.npmignore'}], frameworkFolder = 'src/',
-    repository = this.destinationRoot().split("\\").pop(), isCustomized = repository !== "CoreHTML" && repository !== "MESHTML",
      copyArray = [this.templatePath('**'), `!${this.templatePath('__.npmignore')}`, `!${this.templatePath('__.npmrc')}`, '!**/framework.ts', '!**/framework.less', '!**/framework.config.ts'];
-     if (isCustomized === false) {
+     if (this.ctx.__config.registry) {
         templatesToParse.push({ templateBefore: '__.npmrc', templateAfter: '.npmrc'});
      };
     this.fs.copy(<any>copyArray, this.destinationPath(`${frameworkFolder}${this.options.frameworkName}`));
     templatesToParse.forEach((template) => {
         let templateBefore = typeof template === "string" ? template : template.templateBefore,
         templateAfter = typeof template === "string" ? template : template.templateAfter;
-        this.fs.copyTpl(this.templatePath(templateBefore), this.destinationPath(`${frameworkFolder}${this.options.frameworkName}/${templateAfter}`), {package:frameworkConfig, superFramework: this.superFramework, subFramework: this.subFramework})
+        this.fs.copyTpl(this.templatePath(templateBefore), this.destinationPath(`${frameworkFolder}${this.options.frameworkName}/${templateAfter}`), {package:frameworkConfig, superFramework: this.superFramework, subFramework: this.subFramework, registry: this.ctx.__config.registry})
       });   
 
      // For package.json we just add cmf.core or cmf.mes
      let packageJSONPath = `${frameworkFolder}${this.options.frameworkName}/package.json`,
         packageJSONObject = this.fs.readJSON(this.destinationPath(packageJSONPath));
-        packageJSONObject.cmfLinkDependencies[this.superFramework.name] = `file:../../apps/${this.ctx.prefix}.web/${this.ctx.libsFolder}/{this.superFramework.name}`;        
-        packageJSONObject.optionalDependencies[this.superFramework.name] = "dev";        
+        packageJSONObject.cmfLinkDependencies[this.superFramework.name] = `file:../../apps/${this.ctx.packagePrefix}.web/node_modules/${this.superFramework.name}`;
+        packageJSONObject.cmfLinkDependencies["cmf.taura"] = `file:../../apps/${this.ctx.packagePrefix}.web/node_modules/cmf.taura`;
+        packageJSONObject.optionalDependencies[this.superFramework.name] = this.ctx.__config.channel;
+        packageJSONObject.optionalDependencies["cmf.taura"] = this.ctx.__config.channel;
         this.fs.writeJSON(packageJSONPath, packageJSONObject); 
 
-      this.updateWebAppPackageJSON.call(this, `file:../../src/${this.options.frameworkName}`);   
+      this.updateWebAppPackageJSON(`file:../../src/${this.options.frameworkName}`); 
+      
+      // Update the dev-tasks.json file to include this
+      const config = this.fs.readJSON(this.destinationPath(".dev-tasks.json"));
+      config.framework = this.options.frameworkName;
+      this.fs.writeJSON(this.destinationPath(".dev-tasks.json"), config);
 
       // framework package does not need to go into the web App's config.json, as the actual app needs to import the framework.
       // Also the index needs to be updated. For that reason and since this should be a rare generator, we will not automate this step, like it is done for a regular package.
@@ -87,6 +99,20 @@ export = class extends HtmlGenerator {
    * Will install the framework's package as well as the web app.
    */
   install() {
-    this.install.call(this, `src/${this.options.frameworkName}`);
+    super.install(`src/${this.options.frameworkName}`);
+  }
+
+  end() {
+    this.webAppFoldersPath.forEach(webAppFolderPath => {
+      this.log("Please update your index.html file to include the following code after <base>");
+      this.log(`
+        <script>
+            window["__CMFInternal__extendFramework"] = {
+                framework: "${this.options.frameworkName}",
+                styles: ["node_modules/${this.options.frameworkName}/src/${this.options.frameworkName}.css"] 
+            };
+        </script>
+      `);
+    });
   }
 }
