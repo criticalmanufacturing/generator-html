@@ -6,5 +6,8 @@
   "types": "index.d.ts",  
   "dependencies": {},
   "optionalDependencies": {},
-  "cmfLinkDependencies" : {}
+  "cmfLinkDependencies" : {},
+  "publishConfig": {
+    "registry": "<%= registry %>"
+  }
 }
