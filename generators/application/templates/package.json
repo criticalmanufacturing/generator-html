@@ -8,8 +8,5 @@
     <% } %>
   },
   "optionalDependencies": {},
-  "cmfLinkDependencies" : {},
-  "publishConfig": {
-    "registry": "<%= registry %>"
-  }
+  "cmfLinkDependencies" : {}
 }
