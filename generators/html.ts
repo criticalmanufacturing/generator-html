@@ -27,7 +27,7 @@ export class HtmlGenerator extends Generator {
 		const directories = fs.readdirSync(appPath);
 		return directories
 			.map(dir => path.join(this.ctx.__repositoryRoot, "apps", dir))
-			.filter(dir => fs.statSync(dir).isDirectory);
+			.filter(dir => fs.statSync(dir).isDirectory());
 	}
 	
 	constructor(args, opts) {
@@ -51,12 +51,12 @@ export class HtmlGenerator extends Generator {
 	 */
   	updateWebAppPackageJSON(packagePath) {
 		this.webAppFoldersPath.forEach((webAppFolderPath) => {
-			const webAppPackageJSONObject = this.fs.readJSON(this.destinationPath(webAppFolderPath, "package.json"));
+			const webAppPackageJSONObject = this.fs.readJSON(path.join(webAppFolderPath, "package.json"));
 		
 			if (!(this.options.packageName in webAppPackageJSONObject.optionalDependencies)) {
 				webAppPackageJSONObject.cmfLinkDependencies[this.options.packageName] = packagePath;
 				webAppPackageJSONObject.optionalDependencies[this.options.packageName] = this.ctx.__config.channel;
-				this.fs.writeJSON(this.destinationPath(webAppFolderPath, "package.json"), webAppPackageJSONObject); 	
+				this.fs.writeJSON(path.join(webAppFolderPath, "package.json"), webAppPackageJSONObject); 	
 			}
 		})
 	}
