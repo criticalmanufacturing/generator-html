@@ -69,7 +69,7 @@ export = class extends HtmlGenerator {
       registry: this.ctx.__config.registry
     });
     this.fs.copy(this.templatePath("web.config"), this.destinationPath("web.config"));
-    this.fs.copy(this.templatePath("index.html"), this.destinationPath("index.html"));
+    this.fs.copyTpl(this.templatePath("index.html"), this.destinationPath("index.html"), {isExtendingMes: this.basePackage === "cmf.mes.web.internal"});
   }
 
   install() {

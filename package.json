@@ -1,6 +1,6 @@
 {
   "name": "@criticalmanufacturing/generator-html",
-  "version": "6.0.0-0",
+  "version": "6.0.0-1",
   "description": "CMF HTML GUI Scaffolding",
   "files": [
     "generators/*.js",
@@ -13,7 +13,7 @@
     "html"
   ],
   "dependencies": {
-    "@criticalmanufacturing/dev-tasks": "~5.1.9",
+    "@criticalmanufacturing/dev-tasks": "~6.0.0-0",
     "yeoman-generator": "^1.0.1"
   },
   "devDependencies": {
