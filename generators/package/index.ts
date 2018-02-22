@@ -96,7 +96,6 @@ module.exports = class extends HtmlGenerator {
       'package.json',
       'gulpfile.js',
       '.yo-rc.json', 
-      {templateBefore: 'src/metadata.ts', templateAfter: `src/${packageConfig.name}.metadata.ts`},
       {templateBefore: '__.npmignore', templateAfter: '.npmignore'}
     ];
     const packagesFolder = 'src/packages/';
@@ -138,13 +137,23 @@ module.exports = class extends HtmlGenerator {
         packageJSONObject.optionalDependencies[dependency] = this.ctx.__config.channel;
       });
     } 
+
+    let extendingMES: boolean = false;
     // We need one fallback at the end. If we are customizing, we can end up using ony packages from CORE and we need to customize on top of MES
     if (repository !== "CoreHTML" && repository !== "MESHTML" && Object.keys(packageJSONObject.optionalDependencies).some(function(dependency) {return dependency.startsWith("cmf.mes")})) {
       packageJSONObject.cmfLinkDependencies["cmf.mes"] = `${appLibsFolder}cmf.mes`;
       packageJSONObject.optionalDependencies["cmf.mes"] = this.ctx.__config.channel;
+      extendingMES = true;
+    } else {
+      // Otherwise, we need to depend on cmf.core
+      packageJSONObject.cmfLinkDependencies["cmf.core"] = `${appLibsFolder}cmf.core`;
+      packageJSONObject.optionalDependencies["cmf.core"] = this.ctx.__config.channel;
     }
 
     this.fs.writeJSON(packageJSONPath, packageJSONObject);     
+
+    // Now that we know if we extended cmf.mes or cmf.core, we must copy the metadata file, parsing the template using this information
+    this.fs.copyTpl(this.templatePath('src/metadata.ts'), this.destinationPath(`${packagesFolder}${this.options.packageName}/src/${packageConfig.name}.metadata.ts`), {extendingMES: extendingMES })
 
     /** We also want to update the package.json of the webApp. if the package prefix starts with "cmf", we are dealing with COREHTML or MESHTML
     * In these cases when linking to the web app, the prefix is not enough, because the webApp is "cmf.core.web" and "cmf.mes.web".
