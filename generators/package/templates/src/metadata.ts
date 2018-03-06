@@ -1,7 +1,12 @@
 ﻿//#region Import statements
 
+<% if (extendingMES === true) { %>
+/** MES */
+import { PackageMetadata } from "cmf.mes/src/mes";
+<% } else { %>
 /** Core */
 import {PackageMetadata} from "cmf.core/src/core";
+<% } %>
 
 //#endregion
 

@@ -17,19 +17,34 @@ After the installation is finished, run
 yo @criticalmanufacturing/html
 ```
 
-This will ask you for your client prefix. This prefix is the starting name of all the packages of your solution.
+This will ask you for your client prefix.
+This prefix is the starting name of all the packages of your solution.
+
+It will also ask for your NPM registry and the channel you want to use for receive packages by default.
 
 ## Available Templates
 
 The available templates are:
 
-### App
+### Application
 
 On the root of your package, just open a terminal and run:
 
 ```
-yo @criticalmanufacturing/html:app {appName}
+yo @criticalmanufacturing/html:application {appName}
 ```
+
+### Package
+
+On the root of your repository, just open a terminal and run:
+
+```
+yo @criticalmanufacturing/html:package {PackageName}
+```
+
+The system will ask you if you want to add any dependencies to your package. You can use the cursor (UP/DOWN) and the SPACE bar to select/unselect multiple dependencies. After you are done just press ENTER. You can always add more dependencies in the future, by manually editing the ```package.json``` file of your package.
+
+This will create a new CMF package, within ```src/packages``` using the client prefix.
 
 ### Component
 
@@ -71,26 +86,6 @@ On the root of your package, just open a terminal and run:
 yo @criticalmanufacturing/html:executionView {ExecutionViewName}
 ```
 
-### Framework
-
-On the root of your package, just open a terminal and run:
-
-```
-yo @criticalmanufacturing/html:framework {frameworkName}
-```
-
-### Package
-
-On the root of your repository, just open a terminal and run:
-
-```
-yo @criticalmanufacturing/html:package {PackageName}
-```
-
-The system will ask you if you want to add any dependencies to your package. You can use the cursor (UP/DOWN) and the SPACE bar to select/unselect multiple dependencies. After you are done just press ENTER. You can always add more dependencies in the future, by manually editing the ```__bower.json``` file of your package.
-
-This will create a new CMF package, within ```src/packages```.
-
 ### Pipe
 
 On the root of your package, just open a terminal and run:
@@ -113,6 +108,14 @@ On the root of your package, just open a terminal and run:
 
 ```
 yo @criticalmanufacturing/html:wizard {WizardName}
+```
+
+### Framework
+
+On the root of your package, just open a terminal and run:
+
+```
+yo @criticalmanufacturing/html:framework
 ```
 
 ## Additional Information

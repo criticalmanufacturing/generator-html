@@ -3,6 +3,7 @@
 /**
  * <%= subFramework.aliasExport %> Configuration Interface
  */
+// tslint:disable-next-line
 export interface <%= subFramework.aliasExport %>Config extends <%= superFramework.aliasExport %>Config {
-    
+
 }

@@ -13,7 +13,7 @@ export class <%= subFramework.aliasExport %>Component extends <%= superFramework
 }
 
 export class ComponentFramework extends <%= superFramework.aliasExport %>ComponentFramework implements <%= subFramework.aliasExport %>Framework {
-    
+
     /**
      * <%= subFramework.aliasExport %> Component Sandbox
      */

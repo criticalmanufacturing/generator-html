@@ -1,9 +1,11 @@
 {
   "name": "@criticalmanufacturing/generator-html",
-  "version": "5.1.9",
+  "version": "6.0.0-3",
   "description": "CMF HTML GUI Scaffolding",
   "files": [
-    "generators"
+    "generators/*.js",
+    "generators/*/*.js",
+    "generators/*/templates/"
   ],
   "keywords": [
     "cmf",
@@ -11,15 +13,22 @@
     "html"
   ],
   "dependencies": {
-    "yeoman-generator": "^1.0.1",
-    "@criticalmanufacturing/dev-tasks": "~5.1.9",
-    "gulp-beautify": "^2.0.1"
+    "@criticalmanufacturing/dev-tasks": "~6.0.0-0",
+    "yeoman-generator": "^1.0.1"
   },
   "devDependencies": {
+    "@types/node": "^9.4.0",
+    "@types/yeoman-generator": "^2.0.1",
+    "typescript": "^2.7.1"
   },
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/criticalmanufacturing/generator-html.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "prepublishOnly": "npm run build"
   }
 }

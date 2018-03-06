@@ -1,15 +1,15 @@
 import * as <%= superFramework.aliasExport %> from "<%= superFramework.name %>/src/<%= superFramework.mainModule %>";
-import {SandboxManager} from "cmf.taura/src/taura";
+import { SandboxManager } from "cmf.taura/src/taura";
 import {<%= subFramework.aliasExport %>Config} from "./domain/config/<%= subFramework.mainModule %>.config";
-import {Sandbox} from "./domain/sandbox";
+import { Sandbox } from "./domain/sandbox";
 
-//Let's use the <%= superFramework.mainModule %> as the entry point to export all relevant APIs from the <%= superFramework.name %>
-//******<%= superFramework.aliasExport %> COMPONENT AND GENERIC*******
+// Let's use the <%= superFramework.mainModule %> as the entry point to export all relevant APIs from the <%= superFramework.name %>
+// ****** <%= superFramework.aliasExport %> COMPONENT AND GENERIC *******
 export * from "<%= superFramework.name %>/src/<%= superFramework.mainModule %>";
 export * from "./domain/component";
-export {ComponentFramework} from "./domain/component";
+export { ComponentFramework } from "./domain/component";
 export * from "./domain/framework";
-export {Framework} from "./domain/framework";
+export { <%= subFramework.aliasExport %>Framework } from "./domain/framework";
 
 export class <%= subFramework.aliasExport %> extends <%= superFramework.aliasExport %>.<%= superFramework.aliasExport %> {
 
@@ -40,8 +40,8 @@ export class <%= subFramework.aliasExport %> extends <%= superFramework.aliasExp
 
         // Declare <%= subFramework.aliasExport %> extensions
         // Example:
-	//this.use("<%= subFramework.name %>/src/extensions/app.context", "AppContextImplementation");
-        
+        // this.use("<%= subFramework.name %>/src/extensions/app.context", "AppContextImplementation");
+
     }
 
 }

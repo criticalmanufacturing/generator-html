@@ -1,7 +1,11 @@
-'use strict';
-var HtmlGenerator = require('../html.js');
+import { HtmlGenerator } from "../html";
 
-module.exports = class extends HtmlGenerator {
+export = class extends HtmlGenerator {
+
+  options: {
+    directiveName: string
+  }
+
   constructor(args, opts) {
     super(args, opts);
     this.argument('directiveName', { type: String, required: true });
@@ -12,9 +16,9 @@ module.exports = class extends HtmlGenerator {
    * Copies the directive template and changes the type of component it inherits from, CoreComponent if coming from the COREHTML repository, MesComponent otherwise.
    */
   copyTemplates() {
-    var copyAndParse = (packageName, packageFolder) => {
+    var copyAndParse = (packageName, sourcePackageFolder, packageFolder) => {
       
-      this.copyTpl(packageFolder, "directive", this.options.directiveName, {directive : 
+      this.copyTpl(sourcePackageFolder, "directive", this.options.directiveName, {directive : 
         {
           name: this.options.directiveName,
           class : `${this.options.directiveName.charAt(0).toUpperCase()}${this.options.directiveName.slice(1)}`,
@@ -23,8 +27,11 @@ module.exports = class extends HtmlGenerator {
         }
       }, 
       [".ts"], null, false);
+
+      const dependencies = ["cmf.core"];
+      this.addPackageDependencies(packageFolder, dependencies, true);
     }        
 
-    this.copyAndParse("directives", copyAndParse);    
+    return this.copyAndParse("directives", copyAndParse);    
   }
-};
+}

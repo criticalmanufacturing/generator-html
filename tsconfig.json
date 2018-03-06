@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "sourceMap": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "strictPropertyInitialization": false,
+    "moduleResolution": "node",
+    "baseUrl": "./"
+  },
+  "include": [
+      "generators/*",
+      "generators/*/*"
+  ],
+  "exclude": [
+      "node_modules",
+      "**/*.spec.ts",
+      "templates"
+  ]
+}
