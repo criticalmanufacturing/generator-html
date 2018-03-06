@@ -16,7 +16,7 @@ module.exports = class extends HtmlGenerator {
     this.argument('packageName', { type: String, required: true });
     this.options.packageName = this.camelCaseValue(this.options.packageName);
     // Prepend the package suffix if not present
-    if (!this.options.packageName.startsWith(this.ctx.packagePrefix)) {
+    if (!this.options.packageName.startsWith(`${this.ctx.packagePrefix}.`)) {
       this.options.packageName = `${this.ctx.packagePrefix}.${this.options.packageName}`;
     }
 
