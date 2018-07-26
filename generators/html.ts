@@ -3,6 +3,21 @@ import * as fs from "fs";
 import * as path from "path";
 var contextBuilder = require('@criticalmanufacturing/dev-tasks/main.js');
 
+/**
+ * Possible names of the web app to customize
+ */
+export enum WebAppName
+{	
+	/**
+	 * Core web app name
+	 */
+	Core = "cmf.core.web.internal",
+	/**
+	 * MES web app name
+	 */
+	MES = "cmf.mes.web.internal"
+}
+
 export class HtmlGenerator extends Generator {
 	
 	ctx: {

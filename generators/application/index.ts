@@ -1,5 +1,5 @@
 import * as path from "path";
-import { HtmlGenerator } from "../html";
+import { HtmlGenerator , WebAppName} from "../html";
 import { Answers } from "yeoman-generator";
 
 export = class extends HtmlGenerator {
@@ -35,7 +35,7 @@ export = class extends HtmlGenerator {
         type    : "list",
         name    : "basePackage",
         message : "What is the base package you want to use?",
-        choices : ["cmf.core.web.internal", "cmf.mes.web.internal", "other"]
+        choices : [WebAppName.MES, WebAppName.Core , "other"]
       },
       {
         type    : "input",
@@ -69,7 +69,7 @@ export = class extends HtmlGenerator {
       registry: this.ctx.__config.registry
     });
     this.fs.copy(this.templatePath("web.config"), this.destinationPath("web.config"));
-    this.fs.copyTpl(this.templatePath("index.html"), this.destinationPath("index.html"), {isExtendingMes: this.basePackage === "cmf.mes.web.internal"});
+    this.fs.copyTpl(this.templatePath("index.html"), this.destinationPath("index.html"), {isExtendingMes: this.basePackage === WebAppName.MES});
   }
 
   install() {
