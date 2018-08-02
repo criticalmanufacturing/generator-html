@@ -11,11 +11,11 @@ export enum WebAppName
 	/**
 	 * Core web app name
 	 */
-	Core = "cmf.core.web.internal",
+	Core = "@criticalmanufacturing/core-ui-web",
 	/**
 	 * MES web app name
 	 */
-	MES = "cmf.mes.web.internal"
+	MES = "@criticalmanufacturing/mes-ui-web"
 }
 
 export class HtmlGenerator extends Generator {
