@@ -13,7 +13,7 @@
     "html"
   ],
   "dependencies": {
-    "@criticalmanufacturing/dev-tasks": "~6.0.0",
+    "@criticalmanufacturing/dev-tasks": "~6.1.0",
     "yeoman-generator": "^1.0.1"
   },
   "devDependencies": {
