@@ -1,13 +1,14 @@
 /** Core */
 import {Component, Module, CoreComponent} from "cmf.core/src/core";
 import {Cmf} from "cmf.lbos";
-<% if (executionView.isExtendingMes) { %> 
+<% if (executionView.isExtendingMes) { %>
 /** Mes */
 import {MesComponent} from "cmf.mes/src/mes";
 <% } %>
 /** Nested modules */
 import {TransactionExecutionViewModule, TransactionExecutionViewInterface,
     TransactionExecutionViewArgs} from "cmf.core.business.controls/src/directives/transactionExecutionView/transactionExecutionView";
+import { PageBag } from "cmf.core.controls/src/components/page/pageBag";
 
 /** i18n */
 import i18n from "./i18n/<%= executionView.name %>.default";
@@ -48,7 +49,7 @@ export class <%= executionView.class %> extends<% if (executionView.isExtendingM
 
     //#endregion
 
-    constructor(viewContainerRef: ng.ViewContainerRef) {
+    constructor(viewContainerRef: ng.ViewContainerRef, private _pageBag: PageBag) {
         super(viewContainerRef);
     }
 

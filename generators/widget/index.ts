@@ -7,6 +7,7 @@ export = class extends HtmlGenerator {
   }
 
   packageFolder: string;
+  shouldInstall: boolean = false;
 
   constructor(args, opts) {
     super(args, opts);
@@ -31,9 +32,9 @@ export = class extends HtmlGenerator {
 
       this.copyTpl(sourcePackageFolder, "widget", this.options.widgetName, {widget}, null, ["Settings.ts", "Settings.html", "Settings.less"], true);  
 
-      const dependencies = ["cmf.core.dashboards"];
+      const dependencies = ["cmf.core","cmf.core.dashboards"];
       dependencies.push(widget.isExtendingMes ? "cmf.mes" : "cmf.core");
-      this.addPackageDependencies(packageFolder, dependencies, true);
+      this.shouldInstall = this.addPackageDependencies(packageFolder, dependencies, true);
     } 
 
     return this.copyAndParse("widgets", copyAndParse);    
@@ -41,6 +42,9 @@ export = class extends HtmlGenerator {
 
   install() {
     this.destinationRoot(this.packageFolder);
+    if (this.shouldInstall) {
+      this.spawnCommandSync('gulp', ['install']); 
+    }
     this.spawnCommandSync('gulp', ['build']); 
   }
 };

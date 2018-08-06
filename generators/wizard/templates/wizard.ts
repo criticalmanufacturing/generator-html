@@ -1,13 +1,14 @@
 /** Core */
 import {Component, Module, CoreComponent} from "cmf.core/src/core";
 import {Cmf} from "cmf.lbos";
-<% if (wizard.isExtendingMes) { %> 
+<% if (wizard.isExtendingMes) { %>
 /** Mes */
 import {MesComponent} from "cmf.mes/src/mes";
 <% } %>
 /** Nested modules */
 import {TransactionWizardModule, TransactionWizardInterface,
     TransactionWizardArgs} from "cmf.core.business.controls/src/directives/transactionWizard/transactionWizard";
+import { PageBag } from "cmf.core.controls/src/components/page/pageBag";
 
 /** i18n */
 import i18n from "./i18n/<%= wizard.name %>.default";
@@ -15,19 +16,59 @@ import i18n from "./i18n/<%= wizard.name %>.default";
 import * as ng from "@angular/core";
 
 /**
- * Please provide a meaningful description of this wizard component and how to use it
+ * @whatItDoes
  *
- * ## Inputs
- * * input: Description for Input
+ * Please provide a meaningful description of this component
+ * Try to answer these questions:
+ * * What is it?
+ * * What it does?
+ * * How does it behave with different sizes?
+ * * Does it retrieve data from any external source (server, local database, text file, etc...)?
  *
- * ## Outputs
- * * output: Description for output
+ * @howToUse
  *
- * ## Example
+ * This component is used with the inputs and outputs mentioned below.
  *
- * ```html
- * <your-custom-selector [input]="myInputValue" (output)="myOutputValue"></your-custom-selector>
+ * Besides the description above, please complement it with a meaningful description of this component that answer these questions:
+ * * How to use it?
+ * * Where and When to use it?
+ *
+ * ### Inputs
+ * `string` : **name** - The name of this component
+ * `number` : **value** - The value of this component
+ *
+ * ### Outputs
+ * `string` : **onNameChange** - When the name of the component change, this output emits the new name
+ * `number` : **onValueChange** - When the value of the component change, this output emits the new value
+ *
+ * ### Example
+ * To use the component, assume this HTML Template as an example:
+ *
+ * ```HTML
+ * <<%= wizard.selector %>></<%= wizard.selector %>>
  * ```
+ *
+ * ### _NOTES_
+ * (optional, Provide additional notes here)
+ *
+ * @description
+ *
+ * ## <%= wizard.class %> Component
+ *
+ * ### Dependencies
+ *
+ * #### Components
+ * * ComponentA : `package`
+ * * ComponentB : `package`
+ *
+ * #### Services
+ * * ServiceA : `package`
+ * * ServiceB : `package`
+ *
+ * #### Directives
+ * * DirectiveA : `package`
+ * * DirectiveB : `package`
+ *
  */
 @Component({
     moduleId: __moduleName,
@@ -48,7 +89,7 @@ export class <%= wizard.class %> extends<% if (wizard.isExtendingMes) { %> MesCo
 
     //#endregion
 
-    constructor(viewContainerRef: ng.ViewContainerRef) {
+    constructor(viewContainerRef: ng.ViewContainerRef, private _pageBag: PageBag) {
         super(viewContainerRef);
     }
 

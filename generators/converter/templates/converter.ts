@@ -1,8 +1,8 @@
 /** Core */
 import {Module, Generic} from "cmf.core/src/core";
 /** Nested modules */
-<% if (!converter.isADashboardConverter) { %> import * as Converter from "cmf.core.dashboards/src/converters/converter/converter";<% } %>
-<% if (converter.isADashboardConverter) { %> import * as Converter from "../converter/converter";<% } %>
+<% if (!converter.isADashboardConverter) { %>import * as Converter from "cmf.core.dashboards/src/converters/converter/converter";<% } %>
+<% if (converter.isADashboardConverter) { %>import * as Converter from "../converter/converter";<% } %>
 /** Angular */
 import {PipeTransform, Pipe} from "@angular/core";
 
@@ -29,7 +29,7 @@ import {PipeTransform, Pipe} from "@angular/core";
     pure: true
 })
 export class <%= converter.class %> extends Generic implements PipeTransform {
-    transform(value: string, args: string[]): any {
+    transform(value: any, args: any[]): any {
         // Replace the next line with the code of your converter transform
         return value;
     }

@@ -1,8 +1,8 @@
 /** Core */
 import * as Core from "cmf.core/src/core";
 /** Nested modules */
-<% if (!dataSource.isADashboardDataSource) { %> import * as DataSource from "cmf.core.dashboards/src/dataSources/dataSource/dataSource";<% } %>
-<% if (dataSource.isADashboardDataSource) { %> import * as DataSource from "../dataSource/dataSource";<% } %>
+<% if (!dataSource.isADashboardDataSource) { %>import * as DataSource from "cmf.core.dashboards/src/dataSources/dataSource/dataSource";<% } %>
+<% if (dataSource.isADashboardDataSource) { %>import * as DataSource from "../dataSource/dataSource";<% } %>
 /** i18n */
 import i18n from "./i18n/<%= dataSource.name %>.default";
 /** Angular */
@@ -26,16 +26,13 @@ import * as ng from "@angular/core";
  * * Where and When to use it?
  *
  * ### DataSource Settings Inputs
- * (Provide a detailed list of the DataSource properties configurable in settings. Syntax for list items:
- * " * type [string, number, Object...] : name  - description")
+ * * `string` : **value** _(default)_ - Settings Input description
  *
  * ### DataSource Inputs
- * (Provide a detailed list of the DataSource inputs here. Syntax for list items:
- * " * type [string, number, Object...] : name - description")
+ * * `string` : **value** _(default)_ - Input description
  *
  * ### DataSource Outputs
- * (Provide a detailed list of the DataSource outputs here. Syntax for list items:
- * " * type [string, number, Object...] : name - description")
+ * * `string` : **value** _(default)_ - Output description
  */
 @DataSource.DataSource({
     name: i18n.TITLE

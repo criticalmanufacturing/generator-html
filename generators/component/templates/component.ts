@@ -42,14 +42,10 @@ import * as ng from "@angular/core";
  * * Where and When to use it?
  *
  * ### Inputs
- * (Provide a detailed list of the inputs here. Syntax for each input description:
- * " * type [string, number, Object...] : name - description") Ex:
  * `string` : **name** - The name of this component
  * `number` : **value** - The value of this component
  *
  * ### Outputs
- * (Provide a detailed list of the outputs here. Syntax for each output description:
- * " * type [string, number, Object...] : name - description") Ex:
  * `string` : **onNameChange** - When the name of the component change, this output emits the new name
  * `number` : **onValueChange** - When the value of the component change, this output emits the new value
  *
@@ -57,11 +53,11 @@ import * as ng from "@angular/core";
  * To use the component, assume this HTML Template as an example:
  *
  * ```HTML
- * <<%= component.selector %> [input]="myInputValue" (output)="myOutputValue"></<%= component.selector %>>
+ * <<%= component.selector %>></<%= component.selector %>>
  * ```
  *
- * ### _NOTES_ (optional)
- * (Provide additional notes here)
+ * ### _NOTES_
+ * (optional, Provide additional notes here)
  *
  * @description
  *
@@ -70,19 +66,16 @@ import * as ng from "@angular/core";
  * ### Dependencies
  *
  * #### Components
- * (Provide a detailed list of components that this component depends on) Ex:
- * * ComponentA : `package` (Ex: `cmf.core.controls`)
- * * ComponentB : `package` (Ex: `cmf.core.controls`)
+ * * ComponentA : `package`
+ * * ComponentB : `package`
  *
  * #### Services
- * (Provide a detailed list of services that this component depends on) Ex:
- * * ServiceA : `package` (Ex: `cmf.core.controls`)
- * * ServiceB : `package` (Ex: `cmf.core.controls`)
+ * * ServiceA : `package`
+ * * ServiceB : `package`
  *
  * #### Directives
- *  (Provide a detailed list of directives that this component depends on) Ex:
- * * DirectiveA : `package` (Ex: `cmf.core.controls`)
- * * DirectiveB : `package` (Ex: `cmf.core.controls`)
+ * * DirectiveA : `package`
+ * * DirectiveB : `package`
  *
  */
 @Component({

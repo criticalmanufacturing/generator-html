@@ -1,3 +1,3 @@
 export default {
-    TITLE: "Your DataSource title"
+    TITLE: "<%= dataSource.name %> title"
 };

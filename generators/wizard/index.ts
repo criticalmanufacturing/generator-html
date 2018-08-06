@@ -5,7 +5,7 @@ export = class extends HtmlGenerator {
   options: {
     wizardName: string
   }
-
+  shouldInstall: boolean = false;
   packageFolder: string;
   
   constructor(args, opts) {
@@ -17,6 +17,9 @@ export = class extends HtmlGenerator {
   copyTemplates() {
     var copyAndParse = (packageName, sourcePackageFolder, packageFolder) => {        
       this.packageFolder = packageFolder;
+      if (this.options.wizardName.toLowerCase().startsWith("wizard")) {
+        this.options.wizardName = this.options.wizardName.slice(6);
+      }
       let wizardClass = `Wizard${this.options.wizardName.charAt(0).toUpperCase()}${this.options.wizardName.slice(1)}`,
       wizardCamel = `${wizardClass.charAt(0).toLowerCase()}${wizardClass.slice(1)}`,
       wizard = {
@@ -28,9 +31,9 @@ export = class extends HtmlGenerator {
       };
       this.copyTpl(sourcePackageFolder, "wizard", wizardCamel, {wizard}, null, null, true);
 
-      const dependencies = ["cmf.core.business.controls"];
+      const dependencies = ["cmf.core", "cmf.core.business.controls", "cmf.core.controls", "cmf.lbos"];
       dependencies.push(wizard.isExtendingMes ? "cmf.mes" : "cmf.core");
-      this.addPackageDependencies(packageFolder, dependencies, true);
+      this.shouldInstall = this.addPackageDependencies(packageFolder, dependencies, true);
     }
 
     return this.copyAndParse("components", copyAndParse);    
@@ -38,6 +41,9 @@ export = class extends HtmlGenerator {
 
   install() {
     this.destinationRoot(this.packageFolder);
+    if (this.shouldInstall) {
+      this.spawnCommandSync('gulp', ['install']); 
+    }
     this.spawnCommandSync('gulp', ['build']); 
   }
 }
