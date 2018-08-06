@@ -61,7 +61,7 @@ module.exports = class extends HtmlGenerator {
     }
     
     if (fs.existsSync(this.destinationPath(webAppFolder, "node_modules"))) {
-      const excludeFilter = (folder) => { return folder.startsWith("cmf") && ["cmf.taura", "cmf.core", "cmf.core.multicast.client", "cmf.mes", "cmf.polyfill", "cmf.angular", "cmf.instascan"].indexOf(folder) < 0 && !folder.startsWith("cmf.style") };
+      const excludeFilter = (folder) => { return folder.startsWith("cmf") && ["cmf.taura", "cmf.core", "cmf.core.multicast.client", "cmf.mes", "cmf.polyfill", "cmf.angular", "cmf.instascan", "cmf.core.examples", "cmf.mes.examples"].indexOf(folder) < 0 && !folder.startsWith("cmf.style") };
       webAppPackages = new Set(fs.readdirSync(this.destinationPath(webAppFolder, "node_modules")).filter(excludeFilter));
     }
     
@@ -142,7 +142,7 @@ module.exports = class extends HtmlGenerator {
 
     let extendingMES: boolean = false;
     // We need one fallback at the end. If we are customizing, we can end up using ony packages from CORE and we need to customize on top of MES
-    if (repository !== "CoreHTML" && repository !== "MESHTML" && Object.keys(packageJSONObject.optionalDependencies).some(function(dependency) {return dependency.startsWith("cmf.mes")})) {
+    if (Object.keys(packageJSONObject.optionalDependencies).some(function(dependency) {return dependency.startsWith("cmf.mes")})) {
       packageJSONObject.cmfLinkDependencies["cmf.mes"] = `${appLibsFolder}cmf.mes`;
       packageJSONObject.optionalDependencies["cmf.mes"] = this.ctx.__config.channel;
       // Also depend on cmf.core as we are going to need it for typings
