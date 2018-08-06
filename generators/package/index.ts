@@ -61,18 +61,20 @@ module.exports = class extends HtmlGenerator {
     }
     
     if (fs.existsSync(this.destinationPath(webAppFolder, "node_modules"))) {
-      const excludeFilter = (folder) => { return folder.startsWith("cmf") && ["cmf.taura", "cmf.core", "cmf.core.multicast.client", "cmf.mes", "cmf.lbos", "cmf.polyfill", "cmf.angular"].indexOf(folder) < 0 && !folder.startsWith("cmf.style") };
+      const excludeFilter = (folder) => { return folder.startsWith("cmf") && ["cmf.taura", "cmf.core", "cmf.core.multicast.client", "cmf.mes", "cmf.polyfill", "cmf.angular", "cmf.instascan"].indexOf(folder) < 0 && !folder.startsWith("cmf.style") };
       webAppPackages = new Set(fs.readdirSync(this.destinationPath(webAppFolder, "node_modules")).filter(excludeFilter));
     }
     
     allPackages = (<any>repositoryPackages).union(webAppPackages);
+    const packageNames: {name: string, checked: boolean}[] = Array.from(allPackages).filter((pkg) => !(<string>pkg).startsWith(".")).sort().map((pkg) => {return {name: pkg, checked: pkg === "cmf.lbos" }})
+    const choices = this._getAppPackageDescriptions(webAppFolder, packageNames);
     
     return this.prompt([{
       type    : 'checkbox',
       name    : 'dependencies',      
       message : `Select dependencies`,
-      choices: Array.from(allPackages).filter((pkg) => !(<string>pkg).startsWith(".")).sort().map((pkg) => {return pkg}),
-      pageSize: 20, // We can set up the pageSize attribute but there’s a PR opened ATM to make the height match the terminal height. Soon this won’t be necessary
+      choices: choices,
+      pageSize: 18, // We can set up the pageSize attribute but there’s a PR opened ATM to make the height match the terminal height. Soon this won’t be necessary
       default : null,
       when    : () => Array.from(allPackages).length > 0
     }]).then((answers) => {
@@ -143,6 +145,9 @@ module.exports = class extends HtmlGenerator {
     if (repository !== "CoreHTML" && repository !== "MESHTML" && Object.keys(packageJSONObject.optionalDependencies).some(function(dependency) {return dependency.startsWith("cmf.mes")})) {
       packageJSONObject.cmfLinkDependencies["cmf.mes"] = `${appLibsFolder}cmf.mes`;
       packageJSONObject.optionalDependencies["cmf.mes"] = this.ctx.__config.channel;
+      // Also depend on cmf.core as we are going to need it for typings
+      packageJSONObject.cmfLinkDependencies["cmf.core"] = `${appLibsFolder}cmf.core`;
+      packageJSONObject.optionalDependencies["cmf.core"] = this.ctx.__config.channel;
       extendingMES = true;
     } else {
       // Otherwise, we need to depend on cmf.core
@@ -189,5 +194,33 @@ module.exports = class extends HtmlGenerator {
     super.install(`src/packages/${this.options.packageName}`);  
     this.destinationRoot(`src/packages/${this.options.packageName}`);
     this.spawnCommandSync("gulp", ["build"]);
+  }
+
+  /**
+   * Gets the description for each package in the packages array and returns an array with them
+   */
+  _getAppPackageDescriptions(webAppFolder: string, packages: {name: string}[]): {name?: string, type?: string, line?: string}[] {
+    if (packages == null || packages.length === 0) {
+      return [];
+    }
+    const packagesWithDescription: any[] = [];
+
+    packages.forEach((packageChoice) => {
+      // push the package into the choices
+      const packageInfo: any[] = [];
+      packageInfo.push(packageChoice);
+      const packageName = packageChoice.name;
+      const packageJsonPath = this.destinationPath(webAppFolder, "node_modules", packageName, "package.json");
+      if (fs.existsSync(packageJsonPath)) {
+        const packageJSONObject = this.fs.readJSON(packageJsonPath);
+        if (packageJSONObject != null && packageJSONObject["description"] != null && packageJSONObject["description"] != "") {
+          packageInfo.push({type: "separator", line: `    ${packageJSONObject["description"]}`});
+          packageInfo.push({type: "separator", line: "        "});
+        }
+      }
+      packagesWithDescription.push(...packageInfo);
+    })
+
+    return packagesWithDescription;
   }
 }
