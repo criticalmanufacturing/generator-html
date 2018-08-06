@@ -1,6 +1,6 @@
 /** Core */
 import {Component, Module, CoreComponent} from "cmf.core/src/core";
-<% if (widget.isExtendingMes) { %> 
+<% if (widget.isExtendingMes) { %>
 /** Mes */
 import {MesComponent} from "cmf.mes/src/mes";
 <% } %>
@@ -24,8 +24,6 @@ import * as ng from "@angular/core";
  * * `string` : **name** _(default)_ - The name of the widget
  * * `string` : **description** _(default)_ - The description of the widget
  * * `string` : **iconClass** _(default)_ - The icon CSS class to change the widget icon
- * (Provide a detailed list of the widget configurable options here. Syntax for list items:
- * " * type [string, number, Object...] : name - description")
  *
  * @description
  *
@@ -34,19 +32,16 @@ import * as ng from "@angular/core";
  * ### Dependencies
  *
  * #### Components
- * (Provide a detailed list of components that this component depends on) Ex:
- * * ComponentA : `package` (Ex: `cmf.core.controls`)
- * * ComponentB : `package` (Ex: `cmf.core.controls`)
+ * * ComponentA : `package`
+ * * ComponentB : `package`
  *
  * #### Services
- * (Provide a detailed list of services that this component depends on) Ex:
- * * ServiceA : `package` (Ex: `cmf.core.controls`)
- * * ServiceB : `package` (Ex: `cmf.core.controls`)
+ * * ServiceA : `package`
+ * * ServiceB : `package`
  *
  * #### Directives
- *  (Provide a detailed list of directives that this component depends on) Ex:
- * * DirectiveA : `package` (Ex: `cmf.core.controls`)
- * * DirectiveB : `package` (Ex: `cmf.core.controls`)
+ * * DirectiveA : `package`
+ * * DirectiveB : `package`
  *
  */
 @Component({

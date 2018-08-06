@@ -68,7 +68,7 @@ export = class extends HtmlGenerator {
                 // This algorithm will make sure all situations are accounted. It will unshift the result instead of pushing as it would way more complicated to know where the array of literal end
                 const metadataFile = this.destinationPath(`${sourcePackageFolder}/../${packageName}.metadata.ts`);
                 const fileContent = this.fs.read(metadataFile);   
-                const routeConfigSetting = { regex: /routeConfig[ ]{0,}:[\s\S]*?\[/, unshifter : () => {return `routeConfig: [\n{path: "${answers.url}", loadChildren: ` + "`${packageName}/src/components/" + `${this.options.componentName}/${this.options.componentName}#${this.componentClass}Module` + "`" + `, data: {title: "${this.componentClass}"}},\n`} };
+                const routeConfigSetting = { regex: /routeConfig[ ]{0,}:[\s\S]*?\[/, unshifter : () => {return `routeConfig: [\n                        {\n                            path: "${answers.url}",\n                            loadChildren: ` + "`${packageName}/src/components/" + `${this.options.componentName}/${this.options.componentName}#${this.componentClass}Module` + "`" + `,\n                            data: {title: "${this.componentClass}"}\n                        },\n`} };
                 const routesSetting = { regex: /routes[ ]{0,}:[\s\S]*?\[/, unshifter: () => {return `routes: [\n{\n\n${routeConfigSetting.unshifter()}]\n}\n`} };
                 const flexSetting = { regex: /flex[ ]{0,}:[\s\S]*?\{/, unshifter: () => {return `flex: {\n${routesSetting.unshifter()}],\n`} };
                 const matchedSetting = [routeConfigSetting, routesSetting, flexSetting].find((setting) => fileContent.match(setting.regex) != null);

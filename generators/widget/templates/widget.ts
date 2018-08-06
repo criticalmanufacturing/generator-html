@@ -1,11 +1,11 @@
 /** Core */
 import {Component, Module, CoreComponent} from "cmf.core/src/core";
-<% if (widget.isExtendingMes) { %> 
+<% if (widget.isExtendingMes) { %>
 /** Mes */
 import {MesComponent} from "cmf.mes/src/mes";
 <% } %>
 /** Nested modules */
-<% if (!widget.isADashboardWidget) { %> import * as Widget from "cmf.core.dashboards/src/widgets/widget/widget";<% } %>
+<% if (!widget.isADashboardWidget) { %>import * as Widget from "cmf.core.dashboards/src/widgets/widget/widget";<% } %>
 <% if (widget.isADashboardWidget) { %> import * as Widget from "../widget/widget";<% } %>
 import { <%= widget.class %>SettingsModule, <%= widget.class %>Settings } from "./<%= widget.name %>Settings";
 /** i18n */
@@ -44,18 +44,15 @@ const outputs: Map<string, Widget.WidgetOutput> = new Map<string, Widget.WidgetO
  * * `string` : **name** _(default)_ - The name of the widget
  * * `string` : **description** _(default)_ - The description of the widget
  * * `string` : **iconClass** _(default)_ - The icon CSS class to change the widget icon
- * (Provide a detailed list of the widget inputs here. Syntax for list items:
- * " * type [string, number, Object...] : name _(dynamic)_[opt] - description")
  *
  * ### Widget Outputs
- * (Provide a detailed list of the widget outputs here. Syntax for list items:
- * " * type [string, number, Object...] : name _(dynamic)_[opt] - description")
+ * * `string` : **valueChange** _(default)_ - The icon CSS class to change the widget icon
  *
  * ### Widget Settings
  * See {@link WidgetSettingsComponent}
  *
- * ### _NOTES_ (optional)
- * (Provide additional notes here)
+ * ### _NOTES_
+ * (Optional: Provide additional notes here)
  *
  * @description
  *
@@ -64,17 +61,14 @@ const outputs: Map<string, Widget.WidgetOutput> = new Map<string, Widget.WidgetO
  * ### Dependencies
  *
  * #### Components
- * (Provide a detailed list of components that this component depends on) Ex:
- * * ComponentA : `package` (Ex: `cmf.core.controls`)
- * * ComponentB : `package` (Ex: `cmf.core.controls`)
+ * * ComponentA : `package`
+ * * ComponentB : `package`
  *
  * #### Services
- * (Provide a detailed list of services that this component depends on) Ex:
- * * ServiceA : `package` (Ex: `cmf.core.controls`)
- * * ServiceB : `package` (Ex: `cmf.core.controls`)
+ * * ServiceA : `package`
+ * * ServiceB : `package`
  *
  * #### Directives
- *  (Provide a detailed list of directives that this component depends on) Ex:
  * * DirectiveA : `package` (Ex: `cmf.core.controls`)
  * * DirectiveB : `package` (Ex: `cmf.core.controls`)
  *
@@ -120,7 +114,7 @@ export class <%= widget.class %> extends Widget.WidgetGeneric implements ng.OnCh
      * @param viewContainerRef View Container Ref
      */
     constructor(viewContainerRef: ng.ViewContainerRef) {
-        super(viewContainerRef);
+        super(viewContainerRef.element);
     }
 
     //#region Private methods

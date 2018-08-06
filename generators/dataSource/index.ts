@@ -6,6 +6,9 @@ export = class extends HtmlGenerator {
     dataSourceName: string
   }
 
+  packageFolder: string;
+  shouldInstall: boolean = false;
+
   constructor(args, opts) {
     super(args, opts);
     this.argument('dataSourceName', { type: String, required: true });
@@ -17,7 +20,7 @@ export = class extends HtmlGenerator {
    */
   copyTemplates() {
     var copyAndParse = (packageName, sourcePackageFolder, packageFolder) => {
-
+      this.packageFolder = packageFolder;
       this.copyTpl(sourcePackageFolder, "dataSource", this.options.dataSourceName, {dataSource : 
         { name: this.options.dataSourceName,
           class : `${this.options.dataSourceName.charAt(0).toUpperCase()}${this.options.dataSourceName.slice(1)}`,                  
@@ -26,9 +29,17 @@ export = class extends HtmlGenerator {
       }, [".ts"], null, true);      
 
       const dependencies = ["cmf.core.dashboards", "cmf.core"];
-      this.addPackageDependencies(packageFolder, dependencies, true);
+      this.shouldInstall = this.addPackageDependencies(packageFolder, dependencies, true);
     }
 
     return this.copyAndParse("dataSources", copyAndParse);    
+  }
+
+  install() {
+    this.destinationRoot(this.packageFolder);
+    if (this.shouldInstall) {
+      this.spawnCommandSync('gulp', ['install']); 
+    }
+    this.spawnCommandSync('gulp', ['build']); 
   }
 }

@@ -61,7 +61,8 @@ function applyConfig(packageName: string) {
             menuItems: [],
             entityTypes: [],
             routes: [{
-                    routeConfig: []
+                    routeConfig: [
+                ]
                 }]
         }
     };

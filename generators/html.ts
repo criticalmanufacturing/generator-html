@@ -3,6 +3,21 @@ import * as fs from "fs";
 import * as path from "path";
 var contextBuilder = require('@criticalmanufacturing/dev-tasks/main.js');
 
+/**
+ * Possible names of the web app to customize
+ */
+export enum WebAppName
+{	
+	/**
+	 * Core web app name
+	 */
+	Core = "@criticalmanufacturing/core-ui-web",
+	/**
+	 * MES web app name
+	 */
+	MES = "@criticalmanufacturing/mes-ui-web"
+}
+
 export class HtmlGenerator extends Generator {
 	
 	ctx: {
@@ -117,7 +132,7 @@ export class HtmlGenerator extends Generator {
 		extraFiles = extraFiles || [];
 		let templatesToParse = [...standardFiles.concat(extraFiles).map((extension) => {
       		return { templateBefore: `${type}${extension}`, templateAfter: `${packageFolder}${name}/${name}${extension}`};}),
-					...((is18nAvailable) ? ['default.ts', 'pt-PT.ts', 'de-DE.ts', 'vi-VN.ts'] : []).map((extension) => {
+					...((is18nAvailable) ? ['default.ts', 'pt-PT.ts', 'de-DE.ts', 'vi-VN.ts', 'zh-CN.ts', 'zh-TW.ts'] : []).map((extension) => {
       			return { templateBefore: `i18n/${type}.${extension}`, templateAfter: `${packageFolder}${name}/i18n/${name}.${extension}`};})];            
       	templatesToParse.forEach((template) => {
         	this.fs.copyTpl(this.templatePath(template.templateBefore), this.destinationPath(`${template.templateAfter}`), templateObject)              
@@ -147,8 +162,9 @@ export class HtmlGenerator extends Generator {
 	 * @param packagePath Package path
 	 * @param dependencies Dependencies list
 	 * @param shouldLink Should also add dependency to cmfLinkDependencies
+	 * @returns true if the new dependencies were added
 	 */
-	addPackageDependencies(packagePath: string, dependencies: string[], shouldLink?: boolean): void {
+	addPackageDependencies(packagePath: string, dependencies: string[], shouldLink?: boolean): boolean {
 		const packageJSONPath = this.destinationPath(packagePath, "package.json");
 		const packageJSONObject = this.fs.readJSON(packageJSONPath);
 
@@ -162,19 +178,23 @@ export class HtmlGenerator extends Generator {
 		}
 
 		// Insert the dependencies using channel
+		let newDependency = false;
 		dependencies
 			.filter(dependency => dependency !== packageJSONObject.name) // remove links to itself
 			.forEach(dependency => {
 			if (!(dependency in packageJSONObject.optionalDependencies)) {
 				packageJSONObject.optionalDependencies[dependency] = this.ctx.__config.channel || "*";
+				newDependency = true;
 			}
 
 			if (shouldLink && !(dependency in packageJSONObject.cmfLinkDependencies)) {
 				packageJSONObject.cmfLinkDependencies[dependency] = dependency.startsWith(this.ctx.packagePrefix) ?
 						`file:../${dependency}` : `file:../../apps/${this.ctx.packagePrefix}.web/node_modules/${dependency}`;
+				newDependency = true;
 			}
-		})
-        
-        this.fs.writeJSON(packageJSONPath, packageJSONObject); 
+		});
+
+		this.fs.writeJSON(packageJSONPath, packageJSONObject); 
+		return newDependency;
 	}
 }
