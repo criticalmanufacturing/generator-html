@@ -4,7 +4,7 @@ export default {
     TITLE: "Wizard title",
     ACTION: i18nControls.actions.FINISH,
     steps: {
-        step1: {
+        step1: { // TODO Change this "step1" name to the wizard's step name
             TITLE: "Step 1 title"
         }
     }
