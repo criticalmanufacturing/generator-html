@@ -130,6 +130,7 @@ export class <%= wizard.class %> extends <% if (wizard.isExtendingMes) { %>MesCo
         instanceInput.Id = this._pageBag.context.instance.Id;
         // TODO: If you know your EntityType just assign its name to the type below. Example: "Material"
         instanceInput.Type = this.framework.caches.entityTypes.getEntityTypeNameFromInstance(this.instance);
+        inputs.push(instanceInput);
         return Promise.resolve(inputs);
     }
 
@@ -159,7 +160,7 @@ export class <%= wizard.class %> extends <% if (wizard.isExtendingMes) { %>MesCo
         }
 
         if (this.instance == null) {
-            throw new Error("No Instance Found"); // Missing i18n translation
+            throw new Error(i18n.errors.NO_INSTANCE_FOUND);
         }
 
         return Promise.resolve(null);

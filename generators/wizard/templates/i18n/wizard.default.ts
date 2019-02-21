@@ -7,5 +7,8 @@ export default {
         step1: { // TODO Change this "step1" name to the wizard's step name
             TITLE: "Step 1 title"
         }
+    },
+    errors: {
+        NO_INSTANCE_FOUND: "No Instance Found"
     }
 };
