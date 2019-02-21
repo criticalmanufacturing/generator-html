@@ -101,11 +101,6 @@ export class <%= wizard.class %> extends <% if (wizard.isExtendingMes) { %>MesCo
      */
     public instance: any = null; // TODO Missing instance type, please change this
 
-    /**
-     * The instance for the header display
-     */
-    public instanceForDisplay: any = null; // TODO Missing instance type, please change this
-
     //#endregion
 
     constructor(viewContainerRef: ng.ViewContainerRef, private _pageBag: PageBag) {
@@ -145,7 +140,6 @@ export class <%= wizard.class %> extends <% if (wizard.isExtendingMes) { %>MesCo
 
             if (output != null && output.Instance != null) {
                 this.instance = output.Instance;
-                this.instanceForDisplay = output.Instance;
                 if (this._nestedWizard != null) {
                     return this._nestedWizard.reEvaluateContextPreConditions({ 'instance': this.instance }).
                         then(() => {
