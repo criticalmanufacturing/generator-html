@@ -36,14 +36,14 @@ export = class extends HtmlGenerator {
   prompting() {
     return this.prompt([
       {
-        type    : "input",
-        name    : "packagePrefix",
-        message : "Please specify the client's prefix (example: customization) ",
-        default : null,
+        type: "input",
+        name: "packagePrefix",
+        message: "Please specify the client's prefix (example: customization) ",
+        default: undefined,
         validate: (input: string, answers: Answers): boolean => {
           return typeof input === "string" && !!input && input !== "cmf";
         },
-        store   : true
+        store: true
       }
     ]).then((prefixAnswers) => {
       this.packagePrefix = prefixAnswers.packagePrefix;

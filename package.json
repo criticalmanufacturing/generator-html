@@ -13,14 +13,14 @@
     "html"
   ],
   "dependencies": {
-    "yeoman-generator": "^1.0.1"
+    "yeoman-generator": "~3.1.0"
   },
   "peerDependencies": {
     "@criticalmanufacturing/dev-tasks": "^7.0.0"
   },
   "devDependencies": {
     "@types/node": "^9.4.0",
-    "@types/yeoman-generator": "^2.0.1",
+    "@types/yeoman-generator": "~3.1.0",
     "typescript": "3.2.4"
   },
   "license": "GPL-3.0",

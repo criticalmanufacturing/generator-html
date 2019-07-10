@@ -75,7 +75,7 @@ module.exports = class extends HtmlGenerator {
       message : `Select dependencies`,
       choices: choices,
       pageSize: 18, // We can set up the pageSize attribute but there’s a PR opened ATM to make the height match the terminal height. Soon this won’t be necessary
-      default : null,
+      default : undefined,
       when    : () => Array.from(allPackages).length > 0
     }]).then((answers) => {
       if (answers.dependencies instanceof Array && answers.dependencies.length > 0) {        
