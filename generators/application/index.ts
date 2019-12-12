@@ -1,5 +1,5 @@
 import * as path from "path";
-import { HtmlGenerator, WebAppName } from "../html";
+import { HtmlGenerator , WebAppName} from "../html";
 import { Answers } from "yeoman-generator";
 import * as fs from "fs";
 export = class extends HtmlGenerator {
@@ -26,22 +26,22 @@ export = class extends HtmlGenerator {
   prompting() {
     return this.prompt([
       {
-        type: "input",
-        name: "appName",
-        message: `What is the application name? ${this.ctx.packagePrefix}.`,
-        default: `web`
+        type    : "input",
+        name    : "appName",
+        message : `What is the application name? ${this.ctx.packagePrefix}.`,
+        default : `web`
       },
       {
-        type: "list",
-        name: "basePackage",
-        message: "What is the base package you want to use?",
-        choices: [WebAppName.MES, WebAppName.Core, "other"]
+        type    : "list",
+        name    : "basePackage",
+        message : "What is the base package you want to use?",
+        choices : [WebAppName.MES, WebAppName.Core , "other"]
       },
       {
-        type: "input",
-        name: "otherPackage",
-        message: "What is the base package you want to use?",
-        when: (answers: Answers): boolean => {
+        type    : "input",
+        name    : "otherPackage",
+        message : "What is the base package you want to use?",
+        when    : (answers: Answers): boolean => {
           return answers.basePackage === "other";
         }
       }
@@ -49,7 +49,7 @@ export = class extends HtmlGenerator {
       console.log(answers);
       this.appName = `${this.ctx.packagePrefix}.${answers.appName}`;
       this.basePackage = answers.otherPackage ? answers.otherPackage : answers.basePackage;
-    });
+ 	 });
   }
 
   writing() {
@@ -58,10 +58,10 @@ export = class extends HtmlGenerator {
     this.destinationRoot(path.join(this.ctx.__repositoryRoot, "apps", packageName));
 
     if (this.ctx.__config.registry) {
-      this.fs.copyTpl(this.templatePath("__.npmrc"), this.destinationPath(".npmrc"), { registry: this.ctx.__config.registry });
+      this.fs.copyTpl(this.templatePath("__.npmrc"), this.destinationPath(".npmrc"), {registry: this.ctx.__config.registry});
     }
     this.fs.copy(this.templatePath("__.npmignore"), this.destinationPath(".npmignore"));
-    this.fs.copyTpl(this.templatePath("gulpfile.js"), this.destinationPath("gulpfile.js"), { package: packageName });
+    this.fs.copyTpl(this.templatePath("gulpfile.js"), this.destinationPath("gulpfile.js"), {package: packageName});
     this.fs.copyTpl(this.templatePath("package.json"), this.destinationPath("package.json"), {
       package: packageName,
       basePackage: this.basePackage,
@@ -70,7 +70,7 @@ export = class extends HtmlGenerator {
     });
     this.fs.copy(this.templatePath("web.config"), this.destinationPath("web.config"));
     this.fs.copy(this.templatePath("manifest.json"), this.destinationPath("manifest.json"));
-    this.fs.copyTpl(this.templatePath("index.html"), this.destinationPath("index.html"), { isExtendingMes: this.basePackage === WebAppName.MES });
+    this.fs.copyTpl(this.templatePath("index.html"), this.destinationPath("index.html"), {isExtendingMes: this.basePackage === WebAppName.MES});
   }
 
   install() {
@@ -81,8 +81,6 @@ export = class extends HtmlGenerator {
     const configPath = this.destinationPath("node_modules", this.basePackage, "config.setup.json");
     // Add here other files that may have settings
     if (this.fs.exists(configPath)) {
-
-
       // Try to assign dynamic bundles location (optional task)
       try {
 
@@ -115,13 +113,6 @@ export = class extends HtmlGenerator {
       this.fs.copy(this.templatePath("config.json"), this.destinationPath("config.json"));
     }
 
-    const webConfigPath = this.destinationPath("node_modules", this.basePackage, "web.config");
-
-    // Validate if a web config exists within package directory, it'll be copied to application directory
-    if (this.fs.exists(webConfigPath)) {
-      this.fs.copy(webConfigPath, this.destinationPath("web.config"));
-
-      this.log(`Please configure the file ${this.destinationPath("config.json")}`);
-    }
+    this.log(`Please configure the file ${this.destinationPath("config.json")}`);
   }
 }
