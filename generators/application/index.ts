@@ -1,7 +1,7 @@
 import * as path from "path";
 import { HtmlGenerator , WebAppName} from "../html";
 import { Answers } from "yeoman-generator";
-
+import * as fs from "fs";
 export = class extends HtmlGenerator {
 
   appName: string;
@@ -81,7 +81,34 @@ export = class extends HtmlGenerator {
     const configPath = this.destinationPath("node_modules", this.basePackage, "config.setup.json");
     // Add here other files that may have settings
     if (this.fs.exists(configPath)) {
-      this.fs.copy(configPath, this.destinationPath("config.json"));
+      // Try to assign dynamic bundles location (optional task)
+      try {
+
+        // Escape config JSON
+        var configFile = fs.readFileSync(this.destinationPath("config.json"), 'utf8');
+        configFile = configFile.replace(/"\$\(.*\)"/g, "\"\"");
+        configFile = configFile.replace(/\$\(.*\)/g, '0');
+        fs.writeFileSync(this.destinationPath("config.json"), configFile);
+        var configFileJSON = JSON.parse(configFile);
+
+
+        // Fill some default values (bundlePath)
+        if (configFileJSON && configFileJSON.packages && "bundlePath" in configFileJSON.packages
+          && configFileJSON.packages.bundlePath) {
+          if (configFileJSON.packages.bundlePath[0] !== "/") {
+            configFileJSON.packages.bundlePath = "/" + configFileJSON.packages.bundlePath;
+          }
+          if (this.fs.exists(this.destinationPath("node_modules", this.basePackage, configFileJSON.packages.bundlePath))) {
+            configFileJSON.packages.bundlePath = "node_modules/" + this.basePackage + configFileJSON.packages.bundlePath;
+          } else {
+            configFileJSON.packages.bundlePath = "";
+          }
+        }
+
+        // Persist JSON
+        fs.writeFileSync(this.destinationPath("config.json"), JSON.stringify(configFileJSON, null, "\t"));
+
+      } catch { }
     } else {
       this.fs.copy(this.templatePath("config.json"), this.destinationPath("config.json"));
     }
