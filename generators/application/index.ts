@@ -86,7 +86,7 @@ export = class extends HtmlGenerator {
         // Copy config setup file
         fs.copyFileSync(configPath, this.destinationPath("config.json"));
         // Regular expression to find the bundle path within non standard config JSON
-        var regExpBundles = "\"bundlePath\"\s*\:\s*\".*\"";
+        var regExpBundles = "\"bundlePath\"\\s*\:\\s*\".*\"";
         var configReplaced = false;
         // Read the config file within App Folder
         var configFile = fs.readFileSync(this.destinationPath("config.json"), 'utf8');
