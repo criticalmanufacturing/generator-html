@@ -198,29 +198,6 @@ module.exports = class extends HtmlGenerator {
   }
 
   /**
-   * Utility method to ask the user whether he desires to publish the current created
-   * package to the provided npm registry endpoint
-   */
-  promptForPublish() {
-    return this.prompt(
-      {
-        type: "input",
-        name: "confirmPublish",
-        message: "Do you wish to publish this package to your npm registry endpoint? (y/n)",
-        validate: (input: string, answers: Answers): boolean => {
-          return typeof input === "string" && !!input;
-        },
-        store: false
-      }).then((confirmAnswers) => {
-        if (confirmAnswers.confirmSkip === "y" || confirmAnswers.confirmSkip === "yes" || confirmAnswers.confirmSkip === "Y" || confirmAnswers.confirmSkip === "YES") {
-          return this._publishPackageToNpmRegistry();
-        } else {
-          return null;
-        }
-      });
-  }
-
-  /**
    * Gets the description for each package in the packages array and returns an array with them
    */
   _getAppPackageDescriptions(webAppFolder: string, packages: { name: string }[]): { name?: string, type?: string, line?: string }[] {
@@ -246,28 +223,5 @@ module.exports = class extends HtmlGenerator {
     })
 
     return packagesWithDescription;
-  }
-
-  /**
-   * Publish current package to the provided npm registry endpoint and channel.
-   */
-  private _publishPackageToNpmRegistry() {
-    let filePath = `${this.destinationPath(".dev-tasks.json")}`,
-      fileContent = this.fs.readJSON(this.destinationPath(filePath));
-    let registry, channel;
-    if (fileContent.registry != null) {
-      registry = fileContent.registry;
-    }
-    if (fileContent.channel != null) {
-      channel = fileContent.channel;
-    }
-    try {
-      const result = this.spawnCommandSync("npm", ["publish", `--registry=${registry}`, `--tag=${channel}`], { stdio: 'pipe' });
-      if (result != null && result.stdout != null) {
-        console.log("Package was successfully published.");
-      }
-    } catch (e) {
-      console.log("An error occured trying to publish the package.");
-    }
   }
 }

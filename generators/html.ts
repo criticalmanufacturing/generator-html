@@ -1,13 +1,13 @@
 import * as Generator from 'yeoman-generator';
 import * as fs from "fs";
 import * as path from "path";
+import { Answers } from "yeoman-generator";
 var contextBuilder = require('@criticalmanufacturing/dev-tasks/main.js');
 
 /**
  * Possible names of the web app to customize
  */
-export enum WebAppName
-{	
+export enum WebAppName {
 	/**
 	 * Core web app name
 	 */
@@ -19,16 +19,16 @@ export enum WebAppName
 }
 
 export class HtmlGenerator extends Generator {
-	
+
 	ctx: {
 		libsFolder: string,
 		packagePrefix: string,
 		isCustomized: boolean,
 		metadataFileName: string,
 		metadata: any,
-		__config:  {
+		__config: {
 			channel: string,
-			registry: string	
+			registry: string
 		},
 		__repositoryRoot: string,
 		__projectName: string
@@ -44,7 +44,7 @@ export class HtmlGenerator extends Generator {
 			.map(dir => path.join(this.ctx.__repositoryRoot, "apps", dir))
 			.filter(dir => fs.statSync(dir).isDirectory());
 	}
-	
+
 	constructor(args, opts) {
 		super(args, opts);
 		// Disable the conflicts by forcing everything
@@ -64,14 +64,14 @@ export class HtmlGenerator extends Generator {
 	/**
 	 * Updates the web app's package.json
 	 */
-  	updateWebAppPackageJSON(packagePath) {
+	updateWebAppPackageJSON(packagePath) {
 		this.webAppFoldersPath.forEach((webAppFolderPath) => {
 			const webAppPackageJSONObject = this.fs.readJSON(path.join(webAppFolderPath, "package.json"));
-		
+
 			if (!(this.options.packageName in webAppPackageJSONObject.optionalDependencies)) {
 				webAppPackageJSONObject.cmfLinkDependencies[this.options.packageName] = packagePath;
 				webAppPackageJSONObject.optionalDependencies[this.options.packageName] = this.ctx.__config.channel;
-				this.fs.writeJSON(path.join(webAppFolderPath, "package.json"), webAppPackageJSONObject); 	
+				this.fs.writeJSON(path.join(webAppFolderPath, "package.json"), webAppPackageJSONObject);
 			}
 		})
 	}
@@ -90,10 +90,17 @@ export class HtmlGenerator extends Generator {
 		// Install in the package
 		this.destinationRoot(packagePath);
 		let ls = this.spawnCommandSync('gulp', ['install']);
+		// Compile the package (necessary for publish)
+		this.spawnCommandSync('gulp', ['build']);
+		// Publish the package
+		Promise.resolve(this._promptForPublish());
 
 		// Install in all apps
 		this.webAppFoldersPath.forEach((appFolderPath) => {
 			this.destinationRoot(appFolderPath);
+			if (fs.existsSync(`${appFolderPath}/package-lock.json`)) {
+				fs.unlinkSync(`${appFolderPath}/package-lock.json`);
+			}
 			this.spawnCommandSync('gulp', ['install']);
 		});
 
@@ -106,22 +113,22 @@ export class HtmlGenerator extends Generator {
 	 */
 	copyAndParse(packageInnerFolder, copyAndParseDelegate: (packageName: string, sourcePackagePath: string, packagePack: string) => void) {
 		if (typeof this.config.get("package") === "string") {
-      		return copyAndParseDelegate(this.config.get("package"), `src/${packageInnerFolder}/`, this.destinationPath());
-    	} else if (this.config.get("isRoot") === true) {
+			return copyAndParseDelegate(this.config.get("package"), `src/${packageInnerFolder}/`, this.destinationPath());
+		} else if (this.config.get("isRoot") === true) {
 			let repositoryPackages = fs.readdirSync(this.destinationPath("src/packages")).filter((pkg) => !(pkg.indexOf(".") === 0));
 			return this.prompt([{
-				type    : 'list',
-				name    : 'package',
-				choices : repositoryPackages,
-				message : `Please select which package does this ${packageInnerFolder} belong to.`
+				type: 'list',
+				name: 'package',
+				choices: repositoryPackages,
+				message: `Please select which package does this ${packageInnerFolder} belong to.`
 			}]).then((answers) => {
 				if (typeof answers.package === "string" && answers.package !== "") {
 					return copyAndParseDelegate(answers.package, `src/packages/${answers.package}/src/${packageInnerFolder}/`, `src/packages/${answers.package}`);
 				}
 			});
-	    } else {
-	      this.log("Couldn't resolve target package.");
-	    }	    
+		} else {
+			this.log("Couldn't resolve target package.");
+		}
 	}
 
 	/**
@@ -131,12 +138,14 @@ export class HtmlGenerator extends Generator {
 		standardFiles = standardFiles || ['.ts', '.html', '.less'];
 		extraFiles = extraFiles || [];
 		let templatesToParse = [...standardFiles.concat(extraFiles).map((extension) => {
-      		return { templateBefore: `${type}${extension}`, templateAfter: `${packageFolder}${name}/${name}${extension}`};}),
-					...((is18nAvailable) ? ['default.ts', 'pt-PT.ts', 'de-DE.ts', 'vi-VN.ts', 'zh-CN.ts', 'zh-TW.ts','es-ES.ts','pl-PL.ts'] : []).map((extension) => {
-      			return { templateBefore: `i18n/${type}.${extension}`, templateAfter: `${packageFolder}${name}/i18n/${name}.${extension}`};})];            
-      	templatesToParse.forEach((template) => {
-        	this.fs.copyTpl(this.templatePath(template.templateBefore), this.destinationPath(`${template.templateAfter}`), templateObject)              
-      	});
+			return { templateBefore: `${type}${extension}`, templateAfter: `${packageFolder}${name}/${name}${extension}` };
+		}),
+		...((is18nAvailable) ? ['default.ts', 'pt-PT.ts', 'de-DE.ts', 'vi-VN.ts', 'zh-CN.ts', 'zh-TW.ts', 'es-ES.ts', 'pl-PL.ts'] : []).map((extension) => {
+			return { templateBefore: `i18n/${type}.${extension}`, templateAfter: `${packageFolder}${name}/i18n/${name}.${extension}` };
+		})];
+		templatesToParse.forEach((template) => {
+			this.fs.copyTpl(this.templatePath(template.templateBefore), this.destinationPath(`${template.templateAfter}`), templateObject)
+		});
 	}
 
 	/**
@@ -145,8 +154,8 @@ export class HtmlGenerator extends Generator {
 	 */
 	isExtendingMes(packagePath: string): boolean {
 		// Read the package.json file
-		const packageConfig = require(path.resolve(packagePath,"package.json"));
-		
+		const packageConfig = require(path.resolve(packagePath, "package.json"));
+
 		if (packageConfig) {
 			return [
 				...Object.keys(packageConfig.dependencies || {}),
@@ -182,19 +191,68 @@ export class HtmlGenerator extends Generator {
 		dependencies
 			.filter(dependency => dependency !== packageJSONObject.name) // remove links to itself
 			.forEach(dependency => {
-			if (!(dependency in packageJSONObject.optionalDependencies)) {
-				packageJSONObject.optionalDependencies[dependency] = this.ctx.__config.channel || "*";
-				newDependency = true;
-			}
+				if (!(dependency in packageJSONObject.optionalDependencies)) {
+					packageJSONObject.optionalDependencies[dependency] = this.ctx.__config.channel || "*";
+					newDependency = true;
+				}
 
-			if (shouldLink && !(dependency in packageJSONObject.cmfLinkDependencies)) {
-				packageJSONObject.cmfLinkDependencies[dependency] = dependency.startsWith(this.ctx.packagePrefix) ?
+				if (shouldLink && !(dependency in packageJSONObject.cmfLinkDependencies)) {
+					packageJSONObject.cmfLinkDependencies[dependency] = dependency.startsWith(this.ctx.packagePrefix) ?
 						`file:../${dependency}` : `file:../../apps/${this.ctx.packagePrefix}.web/node_modules/${dependency}`;
-				newDependency = true;
-			}
-		});
+					newDependency = true;
+				}
+			});
 
-		this.fs.writeJSON(packageJSONPath, packageJSONObject); 
+		this.fs.writeJSON(packageJSONPath, packageJSONObject);
 		return newDependency;
+	}
+
+	/**
+   * Utility method to ask the user whether he desires to publish the current created
+   * package to the provided npm registry endpoint
+   */
+	private _promptForPublish() {
+		return this.prompt(
+			{
+				type: "input",
+				name: "confirmPublish",
+				message: "Do you wish to publish this package to your npm registry endpoint? (y/n)",
+				validate: (input: string, answers: Answers): boolean => {
+					return typeof input === "string" && !!input;
+				},
+				store: false
+			}).then((confirmAnswers) => {
+				if (confirmAnswers.confirmPublish === "y" || confirmAnswers.confirmPublish === "yes" || confirmAnswers.confirmPublish === "Y" || confirmAnswers.confirmPublish === "YES") {
+					return this._publishPackageToNpmRegistry();
+				} else {
+					return null;
+				}
+			});
+	}
+
+	/**
+	 * Publish current package to the provided npm registry endpoint and channel.
+	 */
+	private _publishPackageToNpmRegistry() {
+		let filePath, fileContent, registry, channel;
+
+		if (this.ctx.__repositoryRoot != null) {
+			filePath = `${this.destinationPath(this.ctx.__repositoryRoot, ".dev-tasks.json")}`,
+				fileContent = this.fs.readJSON(filePath);
+		}
+		if (fileContent.registry != null) {
+			registry = fileContent.registry;
+		}
+		if (fileContent.channel != null) {
+			channel = fileContent.channel;
+		}
+		try {
+			const result = this.spawnCommandSync("npm", ["publish", `--registry=${registry}`, `--tag=${channel}`]);
+			if (result != null && result.stdout != null) {
+				console.log("Package was successfully published.");
+			}
+		} catch (e) {
+			console.log("An error occured trying to publish the package.");
+		}
 	}
 }
