@@ -89,11 +89,13 @@ export class HtmlGenerator extends Generator {
 
 		// Install in the package
 		this.destinationRoot(packagePath);
+		this.spawnCommandSync('gulp', ['purge']);
 		let ls = this.spawnCommandSync('gulp', ['install']);
 
 		// Install in all apps
 		this.webAppFoldersPath.forEach((appFolderPath) => {
 			this.destinationRoot(appFolderPath);
+			this.spawnCommandSync('gulp', ['purge']);
 			this.spawnCommandSync('gulp', ['install']);
 		});
 

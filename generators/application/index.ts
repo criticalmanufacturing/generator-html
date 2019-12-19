@@ -75,6 +75,7 @@ export = class extends HtmlGenerator {
 
   install() {
     // Install the web
+    this.spawnCommandSync('gulp', ['purge']);
     this.spawnCommandSync('gulp', ['install']);
 
     // Try to populate settings
