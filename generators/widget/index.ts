@@ -43,6 +43,7 @@ export = class extends HtmlGenerator {
   install() {
     this.destinationRoot(this.packageFolder);
     if (this.shouldInstall) {
+      this.spawnCommandSync('gulp', ['purge']);
       this.spawnCommandSync('gulp', ['install']); 
     }
     this.spawnCommandSync('gulp', ['build']); 
