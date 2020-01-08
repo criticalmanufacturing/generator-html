@@ -49,7 +49,7 @@ export = class extends HtmlGenerator {
       console.log(answers);
       this.appName = `${this.ctx.packagePrefix}.${answers.appName}`;
       this.basePackage = answers.otherPackage ? answers.otherPackage : answers.basePackage;
- 	 });
+    });
   }
 
   writing() {
@@ -118,6 +118,18 @@ export = class extends HtmlGenerator {
             fs.writeFileSync(this.destinationPath("config.json"), configFile);
 
             configReplaced = true;
+
+            // For client environment replication, the bundles folders will be copied to root project folder
+            var bundlesFoldersNames = ["bundles", "cmf.style"]
+            var bundlesFolders = [this.destinationPath("node_modules", this.basePackage, bundlesFoldersNames[0])
+            , this.destinationPath("node_modules", this.basePackage, bundlesFoldersNames[1])];
+
+            if (fs.existsSync(bundlesFolders[0])) {
+              this.fs.copy(bundlesFolders[0], this.destinationPath(bundlesFoldersNames[0]));
+            }
+            if (fs.existsSync(bundlesFolders[1])) {
+              this.fs.copy(bundlesFolders[1], this.destinationPath(bundlesFoldersNames[1]));
+            }
           }
         }
         // In worst scenario, the template config JSON will be copied
