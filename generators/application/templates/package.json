@@ -2,6 +2,10 @@
   "name": "<%= package %>",
   "version": "0.0.1",
   "description": "<%= package %> package",
+  "scripts": {
+    "preinstall": "node npm.preinstall.js",
+    "postinstall": "node npm.postinstall.js"
+  },
   "dependencies": {
     <% if (basePackage && channel) { %>
     "<%= basePackage %>": "<%= channel %>"

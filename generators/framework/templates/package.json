@@ -2,6 +2,10 @@
   "name": "<%= package.name %>",
   "version": "0.0.1",
   "description": "<%= package.name %> package",
+  "scripts": {
+    "preinstall": "node npm.preinstall.js",
+    "postinstall": "node npm.postinstall.js"
+  },
   "main": "<%= package.name %>.js",
   "types": "index.d.ts",
   "dependencies": {},
