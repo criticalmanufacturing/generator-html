@@ -61,11 +61,11 @@ module.exports = class extends HtmlGenerator {
     }
     
     if (fs.existsSync(this.destinationPath(webAppFolder, "node_modules"))) {
-      const excludeFilter = (folder) => { 
-				const inclusionList = folder.startsWith("cmf") && ["cmf.taura", "cmf.core", "cmf.core.multicast.client", "cmf.mes", "cmf.polyfill", "cmf.angular", "cmf.instascan", "cmf.core.examples", "cmf.mes.examples"].indexOf(folder) < 0 && !folder.startsWith("cmf.style");
-				return inclusionList || folder === "@angular"; // let's add the @angular dependency since it's a special case
-			};
-      webAppPackages = new Set(fs.readdirSync(this.destinationPath(webAppFolder, "node_modules")).filter(excludeFilter));
+	const excludeFilter = (folder) => { 
+		const inclusionList = folder.startsWith("cmf") && ["cmf.taura", "cmf.core", "cmf.core.multicast.client", "cmf.mes", "cmf.polyfill", "cmf.angular", "cmf.instascan", "cmf.core.examples", "cmf.mes.examples"].indexOf(folder) < 0 && !folder.startsWith("cmf.style");
+		return inclusionList || folder === "@angular"; // let's add the @angular dependency since it's a special case
+	};
+	webAppPackages = new Set(fs.readdirSync(this.destinationPath(webAppFolder, "node_modules")).filter(excludeFilter));
     }
     
     allPackages = (<any>repositoryPackages).union(webAppPackages);
