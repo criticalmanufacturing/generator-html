@@ -1,26 +1,26 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6", 
     "module": "system",
     "lib": ["es2016", "dom"],
     "moduleResolution": "node",
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "removeComments": false,
+    "removeComments": true,
     "noImplicitAny": false,
-    "declaration": true,    
+    "declaration": true,
     "forceConsistentCasingInFileNames" : true,
     "allowUnreachableCode" : false,
     "noUnusedLocals": false,
     "noUnusedParameters" : false,
     "noImplicitReturns": true,
-    "skipLibCheck": true,
+    "skipLibCheck": true,      
     "rootDir": "../../../../"    
   },
-   "include": [    
+  "include": [
     "src/**/*.ts",
     "test/**/*.ts"    
-  ]  
+  ]
 }
