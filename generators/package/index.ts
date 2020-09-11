@@ -61,12 +61,15 @@ module.exports = class extends HtmlGenerator {
     }
     
     if (fs.existsSync(this.destinationPath(webAppFolder, "node_modules"))) {
-      const excludeFilter = (folder) => { return folder.startsWith("cmf") && ["cmf.taura", "cmf.core", "cmf.core.multicast.client", "cmf.mes", "cmf.polyfill", "cmf.angular", "cmf.instascan", "cmf.core.examples", "cmf.mes.examples"].indexOf(folder) < 0 && !folder.startsWith("cmf.style") };
+      const excludeFilter = (folder) => { 
+        const inclusionList = folder.startsWith("cmf") && ["cmf.taura", "cmf.core", "cmf.core.multicast.client", "cmf.mes", "cmf.polyfill", "cmf.angular", "cmf.instascan", "cmf.core.examples", "cmf.mes.examples"].indexOf(folder) < 0 && !folder.startsWith("cmf.style");
+        return inclusionList || folder === "@angular"; // let's add the @angular dependency since it's a special case
+      };
       webAppPackages = new Set(fs.readdirSync(this.destinationPath(webAppFolder, "node_modules")).filter(excludeFilter));
     }
     
     allPackages = (<any>repositoryPackages).union(webAppPackages);
-    const packageNames: {name: string, checked: boolean}[] = Array.from(allPackages).filter((pkg) => !(<string>pkg).startsWith(".")).sort().map((pkg) => {return {name: pkg, checked: pkg === "cmf.lbos" }})
+    const packageNames: {name: string, checked: boolean}[] = Array.from(allPackages).filter((pkg) => !(<string>pkg).startsWith(".")).sort().map((pkg) => {return {name: pkg, checked: (pkg === "cmf.lbos" || pkg === "@angular") }})
     const choices = this._getAppPackageDescriptions(webAppFolder, packageNames);
     
     return this.prompt([{
