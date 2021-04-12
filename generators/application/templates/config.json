@@ -24,7 +24,11 @@
     "packages": {
       "available": [
       ],
-      "baseDir": "node_modules/"
+      "baseDir": "node_modules/",
+      "bundles": {
+        "metadata": true,
+        "i18n": true
+      }
     },
     "general": {
       "environmentName": "",
