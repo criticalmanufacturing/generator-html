@@ -74,10 +74,6 @@ export = class extends HtmlGenerator {
   }
 
   install() {
-    // Install the web
-    this.spawnCommandSync('gulp', ['purge']);
-    this.spawnCommandSync('gulp', ['install']);
-
     // Try to populate settings
     const configPath = this.destinationPath("node_modules", this.basePackage, "config.setup.json");
     // Add here other files that may have settings
@@ -146,4 +142,10 @@ export = class extends HtmlGenerator {
 
     this.log(`Please configure the file ${this.destinationPath("config.json")}`);
   }
+
+  end() {
+    // Install the web after all files are generated
+    this.spawnCommandSync('gulp', ['purge']);
+    this.spawnCommandSync('gulp', ['install']);
+ }
 }
