@@ -85,6 +85,8 @@ export = class extends HtmlGenerator {
     if (this.fs.exists(configPath)) {
       // Try to assign dynamic bundles location (optional task)
       try {
+        // delete file to recreate it from the base package
+        fs.unlinkSync(this.destinationPath("config.json"));
         // Copy config setup file
         fs.copyFileSync(configPath, this.destinationPath("config.json"));
         // Regular expression to find the bundle path within non standard config JSON
