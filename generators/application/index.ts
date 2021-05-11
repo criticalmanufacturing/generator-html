@@ -70,6 +70,7 @@ export = class extends HtmlGenerator {
     });
     this.fs.copy(this.templatePath("web.config"), this.destinationPath("web.config"));
     this.fs.copy(this.templatePath("manifest.json"), this.destinationPath("manifest.json"));
+    this.fs.copy(this.templatePath("config.json"), this.destinationPath("config.json"));
     this.fs.copyTpl(this.templatePath("index.html"), this.destinationPath("index.html"), {isExtendingMes: this.basePackage === WebAppName.MES});
   }
 
@@ -142,8 +143,6 @@ export = class extends HtmlGenerator {
       catch (error) {
         this.fs.copy(this.templatePath("config.json"), this.destinationPath("config.json"));
       }
-    } else {
-      this.fs.copy(this.templatePath("config.json"), this.destinationPath("config.json"));
     }
 
     this.log(`Please configure the file ${this.destinationPath("config.json")}`);
