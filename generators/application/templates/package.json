@@ -4,8 +4,8 @@
   "description": "<%= package %> package",
   "dependencies": {
     <% if (basePackage && channel) { %>
-    "<%= basePackage %>": "<%= channel %>",
-    <% } %>
+    "<%= basePackage %>": "<%= channel %>"
+    <% } %>,
 	"lodash": "3.10.1"
   },
   "optionalDependencies": {},
