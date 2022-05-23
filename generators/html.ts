@@ -134,7 +134,7 @@ export class HtmlGenerator extends Generator {
 		extraFiles = extraFiles || [];
 		let templatesToParse = [...standardFiles.concat(extraFiles).map((extension) => {
       		return { templateBefore: `${type}${extension}`, templateAfter: `${packageFolder}${name}/${name}${extension}`};}),
-					...((is18nAvailable) ? ['default.ts', 'pt-PT.ts', 'de-DE.ts', 'vi-VN.ts', 'zh-CN.ts', 'zh-TW.ts','es-ES.ts','pl-PL.ts'] : []).map((extension) => {
+					...((is18nAvailable) ? ['default.ts', 'pt-PT.ts', 'de-DE.ts', 'vi-VN.ts', 'zh-CN.ts', 'zh-TW.ts','es-ES.ts','pl-PL.ts','fr-FR.ts'] : []).map((extension) => {
       			return { templateBefore: `i18n/${type}.${extension}`, templateAfter: `${packageFolder}${name}/i18n/${name}.${extension}`};})];            
       	templatesToParse.forEach((template) => {
         	this.fs.copyTpl(this.templatePath(template.templateBefore), this.destinationPath(`${template.templateAfter}`), templateObject)              
