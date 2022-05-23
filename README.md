@@ -1,4 +1,4 @@
-CMF MES HTML Yoeman Generator
+CMF MES HTML Yeoman Generator
 ========= 
 
 **generator-html** is a set of scaffolding templates that enable CMF customization teams, partners and clients to easily start a new component, widget or page within Critical Manufacturing MES.
